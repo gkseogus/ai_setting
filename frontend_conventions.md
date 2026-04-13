@@ -81,7 +81,23 @@ interface CompanyInfoFace { ... }
 type StepStatusType = "pending" | "running";
 ```
 
-## 6. 컴포넌트 분리 (1파일 1컴포넌트)
+## 6. 상수 네이밍
+
+모든 상수는 `UPPER_SNAKE_CASE`로 작성한다.
+
+```tsx
+// Bad
+const stepDescriptions = { ... };
+const defaultPageSize = 20;
+const baseStepDescriptions: Record<string, string> = { ... };
+
+// Good
+const STEP_DESCRIPTIONS = { ... };
+const DEFAULT_PAGE_SIZE = 20;
+const BASE_STEP_DESCRIPTIONS: Record<string, string> = { ... };
+```
+
+## 7. 컴포넌트 분리 (1파일 1컴포넌트)
 
 하나의 파일에는 하나의 컴포넌트만 존재해야 한다. 인라인 컴포넌트는 같은 디렉터리에 별도 파일로 분리한다.
 
