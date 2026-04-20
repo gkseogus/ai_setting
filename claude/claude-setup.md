@@ -4,6 +4,19 @@
 
 ---
 
+## 빠른 설치 (원클릭)
+
+```bash
+git clone https://github.com/<your-org>/ai_setting.git ~/ai_setting
+cd ~/ai_setting
+chmod +x setup.sh
+./setup.sh
+```
+
+이 스크립트가 아래 1~10 단계를 자동으로 수행합니다.
+
+---
+
 ## 1. Claude Code 설치
 
 ```bash
@@ -54,7 +67,7 @@ claude plugin install figma --marketplace claude-plugins-official
 
 ## 4. settings.local.json (권한 설정)
 
-`~/.claude/settings.local.json` — 프로젝트별 허용 권한:
+`~/.claude/settings.local.json` — 공통 허용 권한:
 
 ```json
 {
@@ -69,8 +82,13 @@ claude plugin install figma --marketplace claude-plugins-official
       "Bash(aws configure:*)",
       "Bash(aws ssm:*)",
       "Bash(aws s3:*)",
+      "Bash(aws sts:*)",
+      "Bash(aws bedrock:*)",
       "Bash(docker compose:*)",
+      "Bash(docker volume:*)",
+      "Bash(docker exec:*)",
       "Bash(python3:*)",
+      "Bash(python:*)",
       "Bash(pip3 install:*)",
       "Bash(pip install:*)",
       "Bash(pip list:*)",
@@ -80,22 +98,51 @@ claude plugin install figma --marketplace claude-plugins-official
       "Bash(npm install:*)",
       "Bash(npm run:*)",
       "Bash(npm -v)",
+      "Bash(npm --version)",
+      "Bash(npm init:*)",
+      "Bash(npm create:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)",
+      "Bash(npx prettier:*)",
+      "Bash(npx vercel:*)",
       "Bash(node:*)",
       "Bash(git config:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(git remote:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(git rebase:*)",
       "Bash(gh api:*)",
       "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
       "Bash(chmod:*)",
       "Bash(kill:*)",
       "Bash(xargs kill:*)",
       "Bash(ssh-keygen:*)",
-      "Bash(docker volume:*)",
-      "Bash(docker exec:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
       "Bash(brew services:*)",
       "Bash(claude mcp:*)",
+      "Bash(claude --version)",
       "Bash(redis-cli ping:*)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(dig:*)",
+      "Bash(omc:*)",
+      "Bash(tmux list-sessions:*)",
+      "Bash(tmux kill-session:*)",
+      "Bash(tmux kill-server:*)",
+      "Bash(tmux list-panes:*)",
+      "Bash(tmux capture-pane:*)",
+      "Bash(terraform output:*)",
+      "mcp__plugin_oh-my-claudecode_t__python_repl",
+      "mcp__plugin_oh-my-claudecode_t__state_write",
+      "mcp__plugin_oh-my-claudecode_t__state_clear",
+      "mcp__plugin_oh-my-claudecode_t__state_list_active",
+      "mcp__plugin_oh-my-claudecode_t__lsp_document_symbols",
       "Read(//usr/local/bin/**)",
       "Read(//opt/homebrew/bin/**)"
     ]
@@ -103,7 +150,53 @@ claude plugin install figma --marketplace claude-plugins-official
 }
 ```
 
-## 5. HUD 설정
+## 5. 글로벌 CLAUDE.md
+
+`~/CLAUDE.md` — 모든 프로젝트에 적용되는 글로벌 규칙:
+
+```markdown
+# Global Claude Code Rules
+
+## Frontend Conventions
+프론트엔드(React/Next.js) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
+@~/ai_setting/template/frontend_conventions.md
+```
+
+## 6. 커스텀 슬래시 커맨드
+
+`~/.claude/commands/` 디렉토리에 `.md` 파일을 넣으면 `/<파일명>`으로 호출 가능.
+
+### /commit — 변경점 분석 후 커밋
+
+`~/.claude/commands/commit.md`:
+
+변경된 파일을 분석하고 `[타입] 한글 설명` 형식으로 커밋합니다.
+모노레포일 경우 `[타입](스코프) 한글 설명` 형식으로 자동 전환됩니다.
+
+```bash
+/commit                    # 전체 변경점 자동 분석 후 커밋
+/commit 검색 기능 추가       # 설명 지정
+```
+
+### /frontend_convention — 프론트엔드 컨벤션 검토
+
+`~/.claude/commands/frontend_convention.md`:
+
+```markdown
+프론트엔드 컨벤션을 적용하여 현재 프로젝트의 코드를 검토하고 위반 사항을 수정합니다.
+
+## 컨벤션 파일
+@~/ai_setting/template/frontend_conventions.md
+
+## 작업 순서
+1. 위 컨벤션 파일을 읽고 내용을 숙지합니다.
+2. 현재 프로젝트의 src/ 디렉토리를 탐색합니다.
+3. 컨벤션 위반 사항을 찾아 리스트업합니다.
+4. 사용자에게 위반 사항을 보여주고 수정 여부를 확인합니다.
+5. 승인된 항목에 대해 수정을 진행합니다.
+```
+
+## 7. HUD 설정
 
 OMC 설치 후 자동 설정되지만, 수동 설정 시:
 
@@ -115,7 +208,7 @@ mkdir -p ~/.claude/hud
 /oh-my-claudecode:hud setup
 ```
 
-## 6. AWS CLI 설정 (Bedrock 사용 시)
+## 8. AWS CLI 설정 (Bedrock 사용 시)
 
 ```bash
 aws configure
@@ -125,7 +218,7 @@ aws configure
 # Default output format: json
 ```
 
-## 7. OMC 스킬 목록
+## 9. OMC 스킬 목록
 
 설치 시 포함되는 주요 스킬:
 
@@ -146,7 +239,7 @@ aws configure
 | deepinit | 코드베이스 초기화 | `/oh-my-claudecode:deepinit` |
 | external-context | 외부 문서 검색 | `/oh-my-claudecode:external-context` |
 
-## 8. 프로젝트 커스텀 스킬
+## 10. 프로젝트 커스텀 스킬
 
 `.claude/skills/` 디렉토리에 수기로 등록한 프로젝트 전용 스킬. `user_invocable: true`로 설정하면 `/<skill-name>`으로 직접 호출 가능.
 
@@ -154,40 +247,6 @@ aws configure
 |------|--------|------|
 | create-pr | `/create-pr` | PR 템플릿 기준으로 커밋 분석 후 GitHub PR 자동 생성 |
 | ssm-rds | `/ssm-rds` | AWS SSM 포트포워딩으로 RDS 로컬 접속 터널 시작 |
-| omc-reference | (자동 로드) | OMC 에이전트 카탈로그, 도구, 팀 파이프라인, 커밋 프로토콜 참조 |
-
-### create-pr
-
-현재 브랜치의 커밋을 분석하고 `.github/pull_request_template.md` 형식에 맞춰 PR을 자동 생성한다.
-
-```bash
-/create-pr              # main 기준 PR 생성
-/create-pr develop      # develop 기준 PR 생성
-/create-pr --dry-run    # PR 본문 미리보기만
-```
-
-동작 흐름:
-1. `git log main..HEAD`로 커밋 분석
-2. 커밋 prefix(`[fix]`, `[feat]` 등)에서 변경 유형 자동 판별
-3. PR 템플릿의 각 섹션(변경사항, 변경유형, 테스트, 참고사항) 자동 채움
-4. `gh pr create`로 PR 생성
-
-### ssm-rds
-
-AWS SSM 포트포워딩을 통해 Bastion EC2 → RDS 터널을 시작하여 로컬에서 RDS에 접속한다.
-
-```bash
-/ssm-rds              # 포트포워딩 터널 시작 (127.0.0.1:15432)
-/ssm-rds --password   # RDS 비밀번호도 함께 조회
-/ssm-rds --kill       # 기존 SSM 세션 종료
-```
-
-동작 흐름:
-1. AWS CLI, SSM Plugin 설치 여부 확인
-2. 기존 15432 포트 리스닝 세션 확인
-3. Bastion 인스턴스 ID 및 RDS 엔드포인트 자동 조회
-4. SSM 포트포워딩 명령어 생성 및 실행 안내
-5. 접속 정보 출력 (Host: `127.0.0.1`, Port: `15432`, DB: `mealiq`)
 
 ### 커스텀 스킬 추가 방법
 
@@ -207,19 +266,11 @@ user_invocable: true
 # 스킬 내용
 ```
 
-## 9. 세팅 순서 요약
+## 세팅 순서 요약
 
 ```
-1. npm install -g @anthropic-ai/claude-code
-2. settings.json 복사
-3. settings.local.json 복사
-4. claude plugin install oh-my-claudecode --marketplace omc
-5. claude plugin install figma --marketplace claude-plugins-official
-6. /oh-my-claudecode:hud setup
-7. aws configure (필요 시)
-8. Claude Code 재시작
+1. git clone https://github.com/<your-org>/ai_setting.git ~/ai_setting
+2. cd ~/ai_setting && ./setup.sh
+3. Claude Code 재시작
+4. aws configure (필요 시)
 ```
-
-## 9. 프론트엔드 글로벌 컨벤션
-
-별도 파일 참조: `frontend-conventions.md`
