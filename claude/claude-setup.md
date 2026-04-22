@@ -13,7 +13,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-이 스크립트가 아래 1~10 단계를 자동으로 수행합니다.
+이 스크립트가 아래 1~11 단계를 자동으로 수행합니다.
 
 ---
 
@@ -196,7 +196,45 @@ claude plugin install figma --marketplace claude-plugins-official
 5. 승인된 항목에 대해 수정을 진행합니다.
 ```
 
-## 7. HUD 설정
+## 7. MCP 서버 등록
+
+### Playwright (브라우저 자동화/테스트)
+
+```bash
+claude mcp add playwright -s user -- npx @playwright/mcp@latest
+```
+
+### GitHub CLI (GitHub 이슈/PR/리포 관리)
+
+```bash
+# gh-mcp 확장 먼저 설치
+gh extension install shuymn/gh-mcp
+
+claude mcp add github-cli -s user -- gh mcp
+```
+
+### GWS CLI (Google Workspace — Drive, Sheets, Calendar, Gmail)
+
+```bash
+claude mcp add gws-cli -s user -- npx gws-mcp-server@latest
+
+# 인증 (최초 1회)
+npx gws auth login
+```
+
+### Skill Creator (커스텀 스킬 생성)
+
+```bash
+claude plugin install skill-creator
+```
+
+### 등록 확인
+
+```bash
+claude mcp list
+```
+
+## 8. HUD 설정
 
 OMC 설치 후 자동 설정되지만, 수동 설정 시:
 
@@ -208,7 +246,7 @@ mkdir -p ~/.claude/hud
 /oh-my-claudecode:hud setup
 ```
 
-## 8. AWS CLI 설정 (Bedrock 사용 시)
+## 9. AWS CLI 설정 (Bedrock 사용 시)
 
 ```bash
 aws configure
@@ -218,7 +256,7 @@ aws configure
 # Default output format: json
 ```
 
-## 9. OMC 스킬 목록
+## 10. OMC 스킬 목록
 
 설치 시 포함되는 주요 스킬:
 
@@ -239,7 +277,7 @@ aws configure
 | deepinit | 코드베이스 초기화 | `/oh-my-claudecode:deepinit` |
 | external-context | 외부 문서 검색 | `/oh-my-claudecode:external-context` |
 
-## 10. 프로젝트 커스텀 스킬
+## 11. 프로젝트 커스텀 스킬
 
 `.claude/skills/` 디렉토리에 수기로 등록한 프로젝트 전용 스킬. `user_invocable: true`로 설정하면 `/<skill-name>`으로 직접 호출 가능.
 
@@ -273,4 +311,5 @@ user_invocable: true
 2. cd ~/ai_setting && ./setup.sh
 3. Claude Code 재시작
 4. aws configure (필요 시)
+5. npx gws auth login (Google Workspace 사용 시)
 ```
