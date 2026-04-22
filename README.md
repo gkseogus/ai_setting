@@ -41,6 +41,16 @@ ai_setting/
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드 컨벤션 참조) |
 | 6 | `/frontend_convention` 슬래시 커맨드 등록 |
 | 7 | OMC, Figma 플러그인 설치 |
+| 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI) + Skill Creator 플러그인 |
+
+## MCP 서버
+
+| MCP 서버 | 패키지/커맨드 | 용도 |
+|-----------|---------------|------|
+| Playwright | `npx @playwright/mcp@latest` | 브라우저 자동화, E2E 테스트 |
+| GitHub CLI | `gh mcp` (via `shuymn/gh-mcp`) | GitHub 이슈/PR/리포 관리 |
+| GWS CLI | `npx gws-mcp-server@latest` | Google Workspace (Drive, Sheets, Calendar, Gmail) |
+| Skill Creator | `claude plugin install skill-creator` | 커스텀 스킬 생성 (플러그인) |
 
 ## 에이전트별 세팅
 
