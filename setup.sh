@@ -11,7 +11,7 @@ NC='\033[0m'
 step() { echo -e "\n${GREEN}[$1/$TOTAL] $2${NC}"; }
 warn() { echo -e "${YELLOW}⚠ $1${NC}"; }
 
-TOTAL=7
+TOTAL=8
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # 1. Claude Code 설치 확인
@@ -96,6 +96,25 @@ claude plugin install oh-my-claudecode --marketplace omc 2>/dev/null || warn "OM
 echo "  Figma 플러그인 설치..."
 claude plugin install figma --marketplace claude-plugins-official 2>/dev/null || warn "Figma 플러그인 설치 실패 (수동 설치 필요)"
 
+# 8. MCP 서버 등록
+step 8 "MCP 서버 등록"
+
+echo "  Playwright MCP 등록..."
+claude mcp add playwright -s user -- npx @playwright/mcp@latest 2>/dev/null || warn "Playwright MCP 등록 실패"
+
+echo "  GitHub CLI MCP 등록..."
+if ! gh extension list 2>/dev/null | grep -q "gh-mcp"; then
+  echo "  gh-mcp 확장 설치 중..."
+  gh extension install shuymn/gh-mcp 2>/dev/null || warn "gh-mcp 확장 설치 실패"
+fi
+claude mcp add github-cli -s user -- gh mcp 2>/dev/null || warn "GitHub CLI MCP 등록 실패"
+
+echo "  GWS CLI MCP 등록..."
+claude mcp add gws-cli -s user -- npx gws-mcp-server@latest 2>/dev/null || warn "GWS CLI MCP 등록 실패"
+
+echo "  Skill Creator 플러그인 설치..."
+claude plugin install skill-creator 2>/dev/null || warn "Skill Creator 플러그인 설치 실패"
+
 echo ""
 echo -e "${GREEN}=== 세팅 완료! ===${NC}"
 echo ""
@@ -103,3 +122,4 @@ echo "다음 단계:"
 echo "  1. Claude Code 재시작"
 echo "  2. aws configure (AWS 사용 시)"
 echo "  3. /oh-my-claudecode:hud setup (HUD 수동 설정 시)"
+echo "  4. GWS CLI 인증: npx gws auth login (Google Workspace 사용 시)"
