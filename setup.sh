@@ -75,6 +75,10 @@ cat > ~/CLAUDE.md << CLAUDEMD
 ## Frontend Conventions
 프론트엔드(React/Next.js) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
 @$SCRIPT_DIR/template/frontend_conventions.md
+
+## Backend Conventions
+백엔드(FastAPI/Python) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
+@$SCRIPT_DIR/template/backend_conventions.md
 CLAUDEMD
 echo "  ~/CLAUDE.md 생성 완료"
 
@@ -88,6 +92,9 @@ echo "  /create_pr 커맨드 등록 완료"
 
 cp "$SCRIPT_DIR/commands/frontend_convention.md" ~/.claude/commands/frontend_convention.md
 echo "  /frontend_convention 커맨드 등록 완료"
+
+cp "$SCRIPT_DIR/commands/backend_convention.md" ~/.claude/commands/backend_convention.md
+echo "  /backend_convention 커맨드 등록 완료"
 
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
