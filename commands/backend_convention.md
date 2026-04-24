@@ -20,6 +20,7 @@
 - **kwargs 대신 명시적 파라미터를 사용하는지
 - 함수 네이밍 규칙: Router(HTTP동사_리소스), Service(동사_명사), Query(DB동작_대상)
 - 스키마 네이밍: Request/Response/ListItem 접미사
+- 파일 네이밍: routers/ → _route.py, schemas/ → _schema.py, services/ → _service.py, queries/ → _query.py
 - ORM → Pydantic 변환 시 model_validate() 사용 여부
 - 설정이 core/config.py에서 관리되는지
 - .env 파일이 .gitignore에 포함되어 있는지
