@@ -120,6 +120,32 @@ def create_content(
 - Response DTO: `명사+Response` (예: `ContentResponse`, `IngestResponse`)
 - 리스트 아이템: `명사+ListItem` (예: `ContentListItem`)
 
+### 파일 네이밍
+`routers/`, `schemas/`, `services/`, `queries/` 디렉터리 안의 파일은 레이어별 접미사를 붙인다.
+
+| 디렉터리 | 접미사 | 예시 |
+|----------|--------|------|
+| `routers/` | `_route.py` | `content_route.py`, `ingest_route.py` |
+| `schemas/` | `_schema.py` | `content_schema.py`, `ingest_schema.py` |
+| `services/` | `_service.py` | `content_service.py`, `ingest_service.py` |
+| `queries/` | `_query.py` | `content_query.py`, `user_query.py` |
+
+```
+# Bad
+routers/contents.py
+schemas/content.py
+services/content.py
+queries/content.py
+
+# Good
+routers/content_route.py
+schemas/content_schema.py
+services/content_service.py
+queries/content_query.py
+```
+
+> `models/`, `core/`, `db/` 등 다른 디렉터리의 파일에는 접미사를 붙이지 않는다.
+
 ### 모델 네이밍
 - SQLAlchemy 모델: 단수형 PascalCase (예: `Content`, `User`)
 - 테이블명: 복수형 snake_case (예: `contents`, `users`)
