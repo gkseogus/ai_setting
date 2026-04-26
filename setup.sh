@@ -96,6 +96,9 @@ echo "  /frontend_convention 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/backend_convention.md" ~/.claude/commands/backend_convention.md
 echo "  /backend_convention 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/ssh-rds-tunnel.md" ~/.claude/commands/ssh-rds-tunnel.md
+echo "  /ssh-rds-tunnel 커맨드 등록 완료"
+
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
 echo "  OMC 플러그인 설치..."

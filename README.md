@@ -25,7 +25,8 @@ ai_setting/
 │   ├── commit.md                   # /commit 커맨드
 │   ├── create_pr.md                # /create_pr 커맨드
 │   ├── frontend_convention.md      # /frontend_convention 커맨드
-│   └── backend_convention.md       # /backend_convention 커맨드
+│   ├── backend_convention.md       # /backend_convention 커맨드
+│   └── ssh-rds-tunnel.md           # /ssh-rds-tunnel 커맨드
 ├── claude/                         # Claude Code 세팅
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
 │   └── settings.local.json         # 권한 설정 템플릿
@@ -41,7 +42,7 @@ ai_setting/
 | 3 | `~/.claude/settings.json` 생성 (플러그인, HUD, 환경변수) |
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드 컨벤션 참조) |
-| 6 | `/frontend_convention`, `/backend_convention` 슬래시 커맨드 등록 |
+| 6 | `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel` 슬래시 커맨드 등록 |
 | 7 | OMC, Figma 플러그인 설치 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI) + Skill Creator 플러그인 |
 
@@ -68,3 +69,4 @@ ai_setting/
 | `/create_pr` | 커밋 분석 후 PR 템플릿 기반 GitHub PR 자동 생성 |
 | `/frontend_convention` | 프론트엔드 컨벤션 기준으로 코드 검토 및 자동 수정 |
 | `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 리턴 타입, 린트) |
+| `/ssh-rds-tunnel` | RDS SSH 터널 연결 (등록된 RDS 선택 또는 직접 입력) |
