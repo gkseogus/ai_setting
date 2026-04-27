@@ -13,7 +13,8 @@ src/
 │   ├── ui/               # 범용 UI (Button, Input, Modal, Card)
 │   ├── layout/           # 레이아웃 (Header, Footer, Sidebar)
 │   └── [feature]/        # 기능별 그룹 (post/, persona/, comment/)
-├── hooks/                # 커스텀 훅
+├── api/                  # API 호출 함수 (관심사별 파일 분리)
+├── hooks/                # 커스텀 훅 (React Query 훅 포함)
 ├── lib/                  # 유틸리티 함수, API 클라이언트
 ├── types/                # TypeScript 타입 정의
 ├── contents/             # 상수, 라벨 맵, 옵션 배열
@@ -181,7 +182,138 @@ const useBookmarks = () => { ... };
 
 ---
 
-## 10. 에러/로딩 패턴
+## 10. API 호출 규칙
+
+### 폴더 구조
+
+API 호출 함수는 `src/api/` 폴더에 **관심사별로 파일을 분리**하여 관리한다.
+
+```
+src/api/
+├── keys.ts             # 모든 React Query 키 (UPPER_SNAKE_CASE)
+├── auth.ts             # 인증 관련 API
+├── post.ts             # 포스트 관련 API
+├── comment.ts          # 댓글 관련 API
+├── user.ts             # 유저 관련 API
+└── upload.ts           # 파일 업로드 API
+```
+
+### 쿼리 키 관리
+
+모든 React Query 키는 `src/api/keys.ts`에 중앙 관리한다. 키는 `UPPER_SNAKE_CASE` 객체로 정의한다.
+
+```tsx
+// src/api/keys.ts
+export const QUERY_KEYS = {
+  posts: ["posts"] as const,
+  postDetail: (slug: string) => ["posts", slug] as const,
+  comments: (postId: string) => ["comments", postId] as const,
+  user: ["user"] as const,
+  personas: ["personas"] as const,
+};
+```
+
+### API 함수 작성
+
+API 함수는 `fetch` 또는 `axios`로 호출하며, 반환 타입을 명시한다.
+
+```tsx
+// src/api/post.ts
+import type { PostFace, PostListResponseFace } from "@/types";
+
+export const fetchPosts = async (page: number): Promise<PostListResponseFace> => {
+  const res = await fetch(`/api/posts?page=${page}`);
+  if (!res.ok) throw new Error("포스트 목록 조회 실패");
+  return res.json();
+};
+
+export const fetchPostBySlug = async (slug: string): Promise<PostFace> => {
+  const res = await fetch(`/api/posts/${slug}`);
+  if (!res.ok) throw new Error("포스트 조회 실패");
+  return res.json();
+};
+```
+
+### React Query 훅
+
+모든 API 호출은 **React Query(`useQuery`, `useMutation`)로 감싸서** 사용한다. 직접 `fetch`를 컴포넌트에서 호출하지 않는다. 훅은 `src/hooks/`에 위치한다.
+
+```tsx
+// src/hooks/usePosts.ts
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/api/keys";
+import { fetchPosts } from "@/api/post";
+import type { PostListResponseFace } from "@/types";
+
+export const usePosts = (page: number) => {
+  return useQuery<PostListResponseFace>({
+    queryKey: [...QUERY_KEYS.posts, page],
+    queryFn: () => fetchPosts(page),
+  });
+};
+```
+
+```tsx
+// src/hooks/usePost.ts
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/api/keys";
+import { fetchPostBySlug } from "@/api/post";
+import type { PostFace } from "@/types";
+
+export const usePost = (slug: string) => {
+  return useQuery<PostFace>({
+    queryKey: QUERY_KEYS.postDetail(slug),
+    queryFn: () => fetchPostBySlug(slug),
+    enabled: !!slug,
+  });
+};
+```
+
+### Mutation 훅
+
+```tsx
+// src/hooks/useCreatePost.ts
+"use client";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/api/keys";
+import { createPost } from "@/api/post";
+
+export const useCreatePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.posts });
+    },
+  });
+};
+```
+
+### 금지 사항
+
+```tsx
+// Bad - 컴포넌트에서 직접 fetch
+const MyComponent = () => {
+  useEffect(() => {
+    fetch("/api/posts").then(res => res.json()).then(setData);
+  }, []);
+};
+
+// Bad - 쿼리 키 인라인 사용
+useQuery({ queryKey: ["posts"], ... });
+
+// Good - 훅으로 분리 + 중앙 키 사용
+const { data, isLoading } = usePosts(1);
+```
+
+---
+
+## 11. 에러/로딩 패턴
 
 ### 로딩 상태
 - 스켈레톤 UI를 기본으로 사용한다. 스피너보다 스켈레톤을 우선한다.
@@ -240,7 +372,7 @@ if (posts.length === 0) {
 
 ---
 
-## 11. 스타일링 규칙
+## 12. 스타일링 규칙
 
 ### Tailwind 클래스 순서
 
