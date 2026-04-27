@@ -21,3 +21,7 @@
 - 커스텀 훅이 단일 책임을 가지는지
 - 에러/로딩/빈 상태 UI가 있는지
 - Tailwind 클래스 순서 및 cn() 사용 여부
+- API 호출 함수가 `src/api/`에 관심사별로 분리되어 있는지
+- 모든 API 호출이 React Query(`useQuery`/`useMutation`) 훅으로 감싸져 있는지
+- React Query 키가 `src/api/keys.ts`에 중앙 관리되는지 (인라인 키 사용 금지)
+- 컴포넌트에서 직접 `fetch`/`axios` 호출하지 않는지
