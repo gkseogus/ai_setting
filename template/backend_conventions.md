@@ -13,7 +13,8 @@ app/
 ├── queries/       # DB 쿼리 (CRUD, 필터링, 페이지네이션)
 ├── models/        # SQLAlchemy ORM 모델
 ├── schemas/       # Pydantic 스키마 (요청/응답 DTO)
-├── core/          # 설정, 상수, 공통 유틸
+├── contents/      # 상수, 매직 스트링, 허용 필드 등
+├── core/          # 설정, 공통 유틸
 └── db/            # DB 세션, 엔진
 ```
 
@@ -39,7 +40,49 @@ def create(request: Request, db: Session = Depends(get_db)) -> Response:
 
 ---
 
-## 2. 리턴 타입 명시
+## 2. 상수 분리
+
+비즈니스 상수(매직 스트링, 허용 필드 목록, 역할명, 상태값 등)는 `app/contents/` 폴더에 관심사별 파일로 관리한다.
+라우터, 서비스, 쿼리 파일 내에 상수를 인라인으로 정의하지 않는다.
+
+```
+app/contents/
+├── auth.py         # 인증 관련 상수 (ROLE_ADMIN, ALGORITHM 등)
+├── content.py      # 콘텐츠 관련 상수 (STATUS_PUBLISH, ALLOWED_CONTENT_UPDATE_FIELDS 등)
+└── persona.py      # 페르소나 관련 상수 (ALLOWED_PERSONA_UPDATE_FIELDS 등)
+```
+
+```python
+# Bad - 쿼리 파일에 상수 인라인 정의
+ALLOWED_CONTENT_UPDATE_FIELDS = {"title", "slug", "status"}
+
+def update_content(db: Session, content: Content, updates: dict) -> Content:
+    ...
+
+# Good - contents/에서 import
+from app.contents.content import ALLOWED_CONTENT_UPDATE_FIELDS
+
+def update_content(db: Session, content: Content, updates: dict[str, object]) -> Content:
+    ...
+```
+
+```python
+# Bad - 매직 스트링 직접 사용
+if user.role != "admin":
+    ...
+
+# Good - 상수 import
+from app.contents.auth import ROLE_ADMIN
+
+if user.role != ROLE_ADMIN:
+    ...
+```
+
+> `core/config.py`의 환경변수 설정은 상수가 아니므로 `contents/`로 이동하지 않는다.
+
+---
+
+## 3. 리턴 타입 명시
 
 **모든 함수**는 반환 타입을 명시적으로 선언해야 한다. 예외 없음.
 
@@ -84,7 +127,7 @@ def get_published_contents(db: Session, offset: int, limit: int) -> tuple[list[C
 
 ---
 
-## 3. 파라미터 타입 명시
+## 4. 파라미터 타입 명시
 
 함수 파라미터도 반드시 타입을 명시한다. `**kwargs` 사용 금지. 명시적 파라미터로 선언한다.
 
@@ -108,7 +151,7 @@ def create_content(
 
 ---
 
-## 4. 네이밍 규칙
+## 5. 네이밍 규칙
 
 ### 함수명
 - Router: `HTTP동사_리소스` (예: `list_contents`, `get_content`, `create_content_route`)
@@ -152,7 +195,7 @@ queries/content_query.py
 
 ---
 
-## 5. Pydantic 스키마 규칙
+## 6. Pydantic 스키마 규칙
 
 - ORM → Pydantic 변환 시 `model_validate()` 명시적 사용.
 - `model_config = {"from_attributes": True}` 설정.
@@ -164,7 +207,7 @@ items = [ContentListItem.model_validate(row) for row in rows]
 
 ---
 
-## 6. 에러 처리
+## 7. 에러 처리
 
 - Router에서 HTTPException 발생.
 - Service/Query에서는 HTTPException 사용 금지. 값 반환 또는 커스텀 예외 사용.
@@ -191,7 +234,7 @@ def get_user_route(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 
 ---
 
-## 7. 설정 관리
+## 8. 설정 관리
 
 - 환경변수 및 시크릿은 `app/core/config.py`에서 관리.
 - 프로덕션: AWS Secrets Manager 사용.
@@ -200,7 +243,7 @@ def get_user_route(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
 
 ---
 
-## 8. 린트 & 포맷터
+## 9. 린트 & 포맷터
 
 - **Ruff**: 린트 + 포맷터 통합 사용.
 - `pyproject.toml`에 설정 통합.
