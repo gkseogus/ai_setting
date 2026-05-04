@@ -18,8 +18,8 @@ cd ~/ai_setting
 ai_setting/
 ├── setup.sh                        # 원클릭 세팅 스크립트
 ├── template/                       # 템플릿 파일
-│   ├── frontend_conventions.md     # 프론트엔드 글로벌 컨벤션
-│   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션
+│   ├── frontend_conventions.md     # 프론트엔드 글로벌 컨벤션 (12항목)
+│   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션 (9항목, 상수 분리 포함)
 │   └── pull_request_template.md    # PR 템플릿 원본
 ├── commands/                       # 커스텀 슬래시 커맨드 (에이전트 공통)
 │   ├── commit.md                   # /commit 커맨드
@@ -68,5 +68,5 @@ ai_setting/
 | `/commit` | 변경점 분석 후 `[타입] 한글 설명` 형식으로 커밋 (모노레포 자동 감지) |
 | `/create_pr` | 커밋 분석 후 PR 템플릿 기반 GitHub PR 자동 생성 |
 | `/frontend_convention` | 프론트엔드 컨벤션 기준으로 코드 검토 및 자동 수정 |
-| `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 리턴 타입, 린트) |
+| `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 상수 분리, 리턴 타입, 네이밍, 린트) |
 | `/ssh-rds-tunnel` | RDS SSH 터널 연결 (등록된 RDS 선택 또는 직접 입력) |
