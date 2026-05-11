@@ -122,6 +122,9 @@ claude mcp add github-cli -s user -- gh mcp 2>/dev/null || warn "GitHub CLI MCP 
 echo "  GWS CLI MCP 등록..."
 claude mcp add gws-cli -s user -- npx gws-mcp-server@latest 2>/dev/null || warn "GWS CLI MCP 등록 실패"
 
+echo "  Notion MCP 등록..."
+claude mcp add --transport http notion -s user https://mcp.notion.com/mcp 2>/dev/null || warn "Notion MCP 등록 실패"
+
 echo "  Skill Creator 플러그인 설치..."
 claude plugin install skill-creator 2>/dev/null || warn "Skill Creator 플러그인 설치 실패"
 
@@ -133,3 +136,4 @@ echo "  1. Claude Code 재시작"
 echo "  2. aws configure (AWS 사용 시)"
 echo "  3. /oh-my-claudecode:hud setup (HUD 수동 설정 시)"
 echo "  4. GWS CLI 인증: npx gws auth login (Google Workspace 사용 시)"
+echo "  5. Notion MCP 인증: Claude Code에서 /mcp 실행 후 notion 항목 OAuth 인증"
