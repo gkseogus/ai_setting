@@ -222,6 +222,16 @@ claude mcp add gws-cli -s user -- npx gws-mcp-server@latest
 npx gws auth login
 ```
 
+### Notion (페이지/DB 조회 및 편집)
+
+원격 HTTP MCP 엔드포인트를 등록한다. OAuth 기반 인증을 사용한다.
+
+```bash
+claude mcp add --transport http notion -s user https://mcp.notion.com/mcp
+
+# 인증 (최초 1회): Claude Code에서 /mcp 실행 → notion 항목 선택 → OAuth 인증
+```
+
 ### Skill Creator (커스텀 스킬 생성)
 
 ```bash
