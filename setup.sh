@@ -99,6 +99,9 @@ echo "  /backend_convention 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/ssh-rds-tunnel.md" ~/.claude/commands/ssh-rds-tunnel.md
 echo "  /ssh-rds-tunnel 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/notion_diary.md" ~/.claude/commands/notion_diary.md
+echo "  /notion_diary 커맨드 등록 완료"
+
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
 echo "  OMC 플러그인 설치..."
