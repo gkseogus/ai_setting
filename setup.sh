@@ -79,6 +79,11 @@ cat > ~/CLAUDE.md << CLAUDEMD
 ## Backend Conventions
 백엔드(FastAPI/Python) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
 @$SCRIPT_DIR/template/backend_conventions.md
+
+## Error Handling — 표면 vs 근본 판단
+모든 에러 / 버그 / 예외를 다룰 때 반드시 아래 룰(Triage → Root Cause → Fix → Verification → Report)을 따른다.
+정밀 검증이 필요한 상황에서는 \`/root_cause\` 슬래시 커맨드를 호출한다.
+@$SCRIPT_DIR/template/error_handling.md
 CLAUDEMD
 echo "  ~/CLAUDE.md 생성 완료"
 
@@ -104,6 +109,9 @@ echo "  /notion_diary 커맨드 등록 완료"
 
 cp "$SCRIPT_DIR/commands/jira_project.md" ~/.claude/commands/jira_project.md
 echo "  /jira_project 커맨드 등록 완료"
+
+cp "$SCRIPT_DIR/commands/root_cause.md" ~/.claude/commands/root_cause.md
+echo "  /root_cause 커맨드 등록 완료"
 
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
