@@ -20,6 +20,7 @@ ai_setting/
 ├── template/                       # 템플릿 파일
 │   ├── frontend_conventions.md     # 프론트엔드 글로벌 컨벤션 (12항목)
 │   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션 (9항목, 상수 분리 포함)
+│   ├── error_handling.md           # 에러 처리 룰 (표면 vs 근본 판단, 5단계)
 │   └── pull_request_template.md    # PR 템플릿 원본
 ├── commands/                       # 커스텀 슬래시 커맨드 (에이전트 공통)
 │   ├── commit.md                   # /commit 커맨드
@@ -28,7 +29,8 @@ ai_setting/
 │   ├── backend_convention.md       # /backend_convention 커맨드
 │   ├── ssh-rds-tunnel.md           # /ssh-rds-tunnel 커맨드
 │   ├── notion_diary.md             # /notion_diary 커맨드
-│   └── jira_project.md             # /jira_project 커맨드
+│   ├── jira_project.md             # /jira_project 커맨드
+│   └── root_cause.md               # /root_cause 커맨드 (에러 근본 원인 추적 + 검증)
 ├── claude/                         # Claude Code 세팅
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
 │   └── settings.local.json         # 권한 설정 템플릿
@@ -43,8 +45,8 @@ ai_setting/
 | 2 | `~/.claude/commands/`, `~/.claude/hud/` 디렉토리 생성 |
 | 3 | `~/.claude/settings.json` 생성 (플러그인, HUD, 환경변수) |
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
-| 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드 컨벤션 참조) |
-| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/jira_project` 슬래시 커맨드 등록 |
+| 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
+| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/jira_project`, `/root_cause` 슬래시 커맨드 등록 |
 | 7 | OMC, Figma 플러그인 설치 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
 
@@ -76,3 +78,4 @@ ai_setting/
 | `/ssh-rds-tunnel` | RDS SSH 터널 연결 (등록된 RDS 선택 또는 직접 입력) |
 | `/notion_diary` | 현재 세션에서 한 작업을 노션 일지(`일지 > YYYY-MM > YYYY-MM-DD`)에 음슴체로 비개발자도 볼 수 있게 자동 정리 |
 | `/jira_project` | 새 기능/이니셔티브 단위로 Jira 에 Epic 1개 + 하위 Story/Task 트리를 한 번에 등록 (기본 프로젝트 `KAN`) |
+| `/root_cause` | 에러/버그 발생 시 "뿌리 뽑기 vs 싹 자르기" Triage → 근본 원인 추적(5 Whys + 유사 패턴) → 수정 → 검증(증상 재현 불가/유사/회귀/테스트) → 5항목 보고 |
