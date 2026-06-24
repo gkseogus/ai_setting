@@ -23,6 +23,7 @@ Epic (상위 묶음)
 
 ### Epic
 - **Summary**: `<프로젝트명> — <한 줄 요약 제목>`
+- **Priority**: 아래 "우선순위 배분 기준" 에 따라 부여한다 (기본 `High`).
 - **Description** (Atlassian Document Format / Markdown 둘 다 허용):
 
 ```
@@ -39,6 +40,7 @@ Epic (상위 묶음)
 
 ### 하위 Story / Task (각각 1개씩 별도 이슈)
 - **Summary**: `[<카테고리>] <행동 한 줄>` — 카테고리는 `추가`, `수정`, `테스트`, `문서`, `리팩토링`, `인프라` 중 하나.
+- **Priority**: 아래 "우선순위 배분 기준" 에 따라 카테고리/성격별로 부여한다.
 - **Description**:
 
 ```
@@ -55,6 +57,24 @@ Epic (상위 묶음)
 - 모든 하위 이슈는 위 Epic 을 `parent` 로 묶는다 (Epic Link).
 - 한 묶음의 하위 이슈는 3~7개 사이가 이상적. 너무 잘게 쪼개지 않는다.
 
+## 우선순위 배분 기준
+
+모든 이슈(Epic + 자식)에 `priority` 를 반드시 부여한다. KAN 프로젝트 우선순위 값은 `Highest`(id 1) / `High`(id 2) / `Medium`(id 3) / `Low`(id 4) / `Lowest`(id 5). 생성 시 `additional_fields.priority` 또는 생성 후 `editJiraIssue` 로 `{ "priority": { "id": "<id>" } }` 를 넣는다. 프로젝트마다 우선순위 이름/id 가 다를 수 있으므로 `getJiraIssueTypeMetaWithFields` 로 `priority.allowedValues` 를 먼저 확인하고 매핑한다.
+
+기본 배분 규칙:
+
+| 성격 / 카테고리 | 우선순위 |
+|----------------|---------|
+| 데이터 손상 · 보안 · 결제 · 인증/권한 관련 | `Highest` |
+| 핵심 기능 구현 (`추가` · `수정` 중 사용자 가치를 직접 만드는 것), 장애 복구 | `High` |
+| 일반 `테스트`, `인프라`, 부수적 `추가`/`수정` | `Medium` |
+| `문서`, `리팩토링`, 정리성 작업 | `Low` |
+| 있으면 좋지만 미뤄도 되는 nice-to-have | `Lowest` |
+
+- **Epic 우선순위**는 자식 중 가장 높은 우선순위를 따른다 (자식에 `High` 가 있으면 Epic 도 최소 `High`). 기본값은 `High`.
+- 인자에 사용자가 우선순위를 명시했으면(예: "이거 급함", "Highest 로") 그 지시를 우선한다.
+- 카테고리만으로 애매하면 "이 작업이 안 되면 기능이 동작하지 않는가?" 로 판단한다. 그렇다면 `High` 이상, 아니면 `Medium` 이하.
+
 ## 말투 규칙
 - Summary 는 **명사형 한 줄**. 예: "자동 퇴근 워커 cron 스케줄 KST 00:00 1회로 고정".
 - Description 은 **음슴체 또는 평어** ("~함", "~한다"). 존댓말 금지.
@@ -70,10 +90,12 @@ Epic (상위 묶음)
 2. `getAccessibleAtlassianResources` 로 `cloudId` 를 가져온다.
 3. `getJiraProjectIssueTypesMetadata` 로 해당 프로젝트의 issueType 메타데이터를 확인한다.
    - Epic / Story / Task 의 정확한 `issuetype.id` 또는 name 을 잡는다. 프로젝트마다 다를 수 있으므로 응답을 보고 매핑한다.
-4. **Epic 먼저 생성** — `createJiraIssue` 호출.
+   - 함께 `getJiraIssueTypeMetaWithFields` 로 `priority.allowedValues` 와 필수 필드를 확인한다. 각 이슈에 "우선순위 배분 기준" 에 따른 priority id 를 미리 매핑해 둔다.
+4. **Epic 먼저 생성** — `createJiraIssue` 호출. priority 를 함께 부여한다.
    - 응답의 `key` (예: `KAN-101`) 를 보관.
-5. **하위 Story/Task 들을 순차 생성** — 각각 `createJiraIssue` 호출 시 `fields.parent = { key: "<Epic key>" }` 로 묶는다.
+5. **하위 Story/Task 들을 순차 생성** — 각각 `createJiraIssue` 호출 시 `fields.parent = { key: "<Epic key>" }` 로 묶고, 카테고리별 priority 를 함께 부여한다.
    - 일부 Jira Cloud 환경에서는 `customfield_10014` (Epic Link) 로 묶어야 하는 경우도 있다. 위 방법이 실패하면 그 필드로 재시도한다.
+   - priority 를 생성 시 못 넣었으면 생성 직후 `editJiraIssue` 로 보정한다.
 6. 생성된 이슈 키를 모아 요약을 출력한다. 형식:
 
 ```
@@ -98,6 +120,7 @@ Epic: <Epic key> — <Epic summary>
 - **Story 와 Task 의 구분이 애매하면 Task 로 통일한다.** 일반 백오피스/내부 작업은 Task, 사용자 가치를 만드는 작업은 Story.
 - **이슈 타입이 프로젝트에 없으면** — 예: 일부 프로젝트는 Epic 대신 "Initiative" 만 쓰는 경우가 있다. 3번 단계에서 확인한 metadata 에 맞춰 가장 가까운 상위 타입으로 대체한다.
 - 본문에 PR 링크 / 외부 문서 링크가 있으면 Description 끝에 "참고" 섹션으로 모은다.
+- **모든 이슈에 priority 를 빠뜨리지 않는다.** 생성 후 요약 출력 시 각 이슈 옆에 부여한 우선순위를 함께 표기한다.
 
 ## 예시 (참고용, 출력은 동일 구조로)
 
@@ -108,11 +131,11 @@ KAN Re:B Attendance 자동 퇴근 워커 정상화 + 17:00 KST 기록
 
 생성되는 트리:
 ```
-Epic: KAN-101 — Re:B Attendance — 자동 퇴근 워커 정상화 + 17:00 KST 기록
-  └── KAN-102 — [수정] 자동 퇴근 cron 스케줄 매일 KST 00:00 1회로 고정
-  └── KAN-103 — [수정] 자동 퇴근 기록 시각을 17:00 KST 로 변경
-  └── KAN-104 — [추가] 자동 퇴근 워커 e2e 테스트 17건
-  └── KAN-105 — [문서] 자동 퇴근 정책 README 갱신
+Epic: KAN-101 — Re:B Attendance — 자동 퇴근 워커 정상화 + 17:00 KST 기록  (High)
+  └── KAN-102 — [수정] 자동 퇴근 cron 스케줄 매일 KST 00:00 1회로 고정  (High)
+  └── KAN-103 — [수정] 자동 퇴근 기록 시각을 17:00 KST 로 변경  (High)
+  └── KAN-104 — [추가] 자동 퇴근 워커 e2e 테스트 17건  (Medium)
+  └── KAN-105 — [문서] 자동 퇴근 정책 README 갱신  (Low)
 
 링크:
 - https://rebstudios.atlassian.net/browse/KAN-101
