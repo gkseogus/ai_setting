@@ -262,3 +262,72 @@ select = ["E", "F", "I", "ANN", "B", "UP"]
 
 - `ANN`: 리턴 타입 / 파라미터 타입 누락 시 에러.
 - 커밋 전 `ruff check --fix && ruff format` 실행.
+
+---
+
+## 10. 문서 업데이트
+
+코드 변경 시 관련 문서를 **같은 작업 단위 안에서 함께 업데이트**한다. 문서 갱신을 별도 작업으로 미루지 않는다.
+
+### 업데이트 대상
+- `README.md`: 설치/실행, 마이그레이션, 환경변수, 실행 명령이 바뀌면 반드시 갱신한다.
+- API 문서: FastAPI는 라우터의 `summary` / `description` / `response_model` 과 스키마의 `Field(description=...)` 를 최신 상태로 유지한다. OpenAPI(`/docs`)가 실제 동작과 일치해야 한다.
+- `.env.example`: 새 환경변수(`app/core/config.py` 추가분)를 즉시 반영한다. 실제 값·시크릿은 넣지 않는다.
+- 마이그레이션: 스키마(모델) 변경 시 Alembic 리비전을 같은 작업에서 생성하고, 필요한 실행 순서를 문서에 남긴다.
+
+### 규칙
+- 엔드포인트를 추가/변경/삭제하면 요청·응답 스키마 설명을 함께 갱신한다. 죽은 문서·예시를 남기지 않는다.
+- 스키마 필드가 바뀌면 `response_model` 과 문서 예시를 동기화한다.
+- 상수(`app/contents/`)의 의미가 문서에 설명돼 있다면 함께 수정한다.
+
+```python
+# Good - 새 필드 추가 시 스키마 description 과 README 예시를 함께 갱신
+class ContentResponse(BaseModel):
+    slug: str = Field(description="콘텐츠 고유 슬러그")
+    model_config = {"from_attributes": True}
+```
+
+---
+
+## 11. 테스트 코드
+
+기능을 추가하거나 수정하면 **관련 테스트를 같은 커밋 범위에서 함께 추가·갱신**한다. 테스트 없이 "동작한다"고 보고하지 않는다.
+
+### 도구
+- **pytest** + `pytest-asyncio`(비동기 라우터/서비스).
+- 라우터 테스트: FastAPI `TestClient` 또는 `httpx.AsyncClient`.
+- DB 의존 테스트: 트랜잭션 롤백 픽스처 또는 별도 테스트 DB/SQLite 사용. 운영 DB에 붙지 않는다.
+
+### 파일 위치 & 네이밍
+- 테스트는 `tests/` 하위에 레이어 구조를 미러링한다.
+- 파일명은 `test_대상.py`, 함수명은 `test_동작` 으로 작성한다.
+
+```
+tests/
+├── routers/test_content_route.py
+├── services/test_content_service.py
+└── queries/test_content_query.py
+```
+
+### 레이어별 테스트 범위
+- **Router**: 상태 코드, 응답 스키마, 인증/권한, 에러(404/400 등) 분기.
+- **Service**: 비즈니스 로직 · 검증 · 변환. Query는 목킹하거나 테스트 DB로 검증.
+- **Query**: 실제 세션으로 CRUD·필터·페이지네이션 결과 검증.
+
+### 작성 규칙
+- 픽스처(`conftest.py`)로 DB 세션·클라이언트·샘플 데이터를 공유한다. 테스트 간 상태를 격리한다(각 테스트 후 롤백).
+- 정상 흐름 + 실패/예외 흐름(§7의 404/400 등)을 각각 최소 1개 검증한다.
+- 버그 수정 시 **해당 버그를 재현하는 회귀 테스트**를 반드시 추가한다.
+- 파라미터 조합이 많으면 `@pytest.mark.parametrize` 로 표현한다.
+- 테스트 함수도 §3·§4 규칙(리턴/파라미터 타입 명시)을 따른다. 단 `ANN` 은 `tests/*` 에서 완화할 수 있다.
+
+```python
+# Good - 정상 + 에러 흐름을 함께 검증
+def test_get_content_returns_404_when_missing(client: TestClient) -> None:
+    res = client.get("/contents/unknown-slug")
+    assert res.status_code == 404
+```
+
+### 금지 사항
+- 테스트를 비활성화(`@pytest.mark.skip`)한 채 커밋하는 것. 부득이하면 사유를 주석/`reason=` 으로 남긴다.
+- 타입체크·lint 통과만으로 검증을 대체하는 것. 실제 동작을 테스트로 관찰해야 한다.
