@@ -25,3 +25,6 @@
 - 모든 API 호출이 React Query(`useQuery`/`useMutation`) 훅으로 감싸져 있는지
 - React Query 키가 `src/api/keys.ts`에 중앙 관리되는지 (인라인 키 사용 금지)
 - 컴포넌트에서 직접 `fetch`/`axios` 호출하지 않는지
+- 코드 변경 시 관련 문서(README, .env.example, 컴포넌트/훅 문서, API 연동 문서)가 같은 작업 단위에서 갱신되었는지
+- 기능 추가/수정 시 관련 테스트(컴포넌트/훅은 같은 폴더 `*.test.ts(x)`, E2E는 `e2e/*.spec.ts`)가 같은 커밋 범위에 추가·갱신되었는지 (버그 수정은 회귀 테스트 필수)
+- 테스트가 `.skip`/`xit`로 비활성화된 채 커밋되지 않았는지 (부득이하면 사유 주석 명시)

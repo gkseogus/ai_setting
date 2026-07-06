@@ -25,3 +25,6 @@
 - ORM → Pydantic 변환 시 model_validate() 사용 여부
 - 설정이 core/config.py에서 관리되는지
 - .env 파일이 .gitignore에 포함되어 있는지
+- 코드 변경 시 관련 문서(README, 라우터 summary/description, `Field(description=...)`, .env.example, Alembic 리비전)가 같은 작업 단위에서 갱신되었는지
+- 기능 추가/수정 시 관련 테스트(tests/ 하위 레이어 미러링, 정상 + 실패/예외 흐름)가 같은 커밋 범위에 추가·갱신되었는지 (버그 수정은 회귀 테스트 필수)
+- 테스트가 `@pytest.mark.skip`으로 비활성화된 채 커밋되지 않았는지 (부득이하면 reason 명시)
