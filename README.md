@@ -18,8 +18,8 @@ cd ~/ai_setting
 ai_setting/
 ├── setup.sh                        # 원클릭 세팅 스크립트
 ├── template/                       # 템플릿 파일
-│   ├── frontend_conventions.md     # 프론트엔드 글로벌 컨벤션 (12항목)
-│   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션 (9항목, 상수 분리 포함)
+│   ├── frontend_conventions.md     # 프론트엔드 글로벌 컨벤션 (14항목, 문서 업데이트·테스트 코드 포함)
+│   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션 (11항목, 상수 분리·문서 업데이트·테스트 코드 포함)
 │   ├── error_handling.md           # 에러 처리 룰 (표면 vs 근본 판단, 5단계)
 │   └── pull_request_template.md    # PR 템플릿 원본
 ├── commands/                       # 커스텀 슬래시 커맨드 (에이전트 공통)
@@ -73,8 +73,8 @@ ai_setting/
 |--------|------|
 | `/commit` | 변경점 분석 후 `[타입] 한글 설명` 형식으로 커밋 (모노레포 자동 감지) |
 | `/create_pr` | 커밋 분석 후 PR 템플릿 기반 GitHub PR 자동 생성 |
-| `/frontend_convention` | 프론트엔드 컨벤션 기준으로 코드 검토 및 자동 수정 |
-| `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 상수 분리, 리턴 타입, 네이밍, 린트) |
+| `/frontend_convention` | 프론트엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (상수/타입/훅/API 규칙 + 문서·테스트 동반 갱신 검사) |
+| `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 상수 분리, 리턴 타입, 네이밍, 린트 + 문서·테스트 동반 갱신 검사) |
 | `/ssh-rds-tunnel` | RDS SSH 터널 연결 (등록된 RDS 선택 또는 직접 입력) |
 | `/notion_diary` | 현재 세션에서 한 작업을 노션 일지(`일지 > YYYY-MM > YYYY-MM-DD`)에 음슴체로 비개발자도 볼 수 있게 자동 정리 |
 | `/jira_project` | 새 기능/이니셔티브 단위로 Jira 에 Epic 1개 + 하위 Story/Task 트리를 한 번에 등록 (기본 프로젝트 `KAN`) |
