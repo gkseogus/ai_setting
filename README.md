@@ -27,7 +27,7 @@ ai_setting/
 │   ├── create_pr.md                # /create_pr 커맨드
 │   ├── frontend_convention.md      # /frontend_convention 커맨드
 │   ├── backend_convention.md       # /backend_convention 커맨드
-│   ├── ssh-rds-tunnel.md           # /ssh-rds-tunnel 커맨드
+│   ├── ssh-rds-tunnel.md           # /ssh-rds-tunnel 커맨드 (SSH/SSM 터널)
 │   ├── notion_diary.md             # /notion_diary 커맨드
 │   ├── jira_project.md             # /jira_project 커맨드
 │   └── root_cause.md               # /root_cause 커맨드 (에러 근본 원인 추적 + 검증)
@@ -75,7 +75,7 @@ ai_setting/
 | `/create_pr` | 커밋 분석 후 PR 템플릿 기반 GitHub PR 자동 생성 |
 | `/frontend_convention` | 프론트엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (상수/타입/훅/API 규칙 + 문서·테스트 동반 갱신 검사) |
 | `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 상수 분리, 리턴 타입, 네이밍, 린트 + 문서·테스트 동반 갱신 검사) |
-| `/ssh-rds-tunnel` | RDS SSH 터널 연결 (등록된 RDS 선택 또는 직접 입력) |
+| `/ssh-rds-tunnel` | RDS 터널 연결 — 베스천 SSH(reb) 또는 SSM 포트포워딩(mealiq) 방식 자동 분기 (등록된 RDS 선택 또는 직접 입력) |
 | `/notion_diary` | 현재 세션에서 한 작업을 노션 일지(`일지 > YYYY-MM > YYYY-MM-DD`)에 음슴체로 비개발자도 볼 수 있게 자동 정리 |
 | `/jira_project` | 새 기능/이니셔티브 단위로 Jira 에 Epic 1개 + 하위 Story/Task 트리를 한 번에 등록 (기본 프로젝트 `KAN`) |
 | `/root_cause` | 에러/버그 발생 시 "뿌리 뽑기 vs 싹 자르기" Triage → 근본 원인 추적(5 Whys + 유사 패턴) → 수정 → 검증(증상 재현 불가/유사/회귀/테스트) → 5항목 보고 |
