@@ -140,7 +140,8 @@ echo "  Notion MCP 등록..."
 claude mcp add --transport http notion -s user https://mcp.notion.com/mcp 2>/dev/null || warn "Notion MCP 등록 실패"
 
 echo "  Atlassian MCP 등록..."
-claude mcp add --transport sse atlassian -s user https://mcp.atlassian.com/v1/sse 2>/dev/null || warn "Atlassian MCP 등록 실패"
+# SSE 엔드포인트(v1/sse)는 2026-06-30 이후 지원 종료 — Streamable HTTP(v1/mcp) 사용
+claude mcp add --transport http atlassian -s user https://mcp.atlassian.com/v1/mcp 2>/dev/null || warn "Atlassian MCP 등록 실패"
 
 echo "  Skill Creator 플러그인 설치..."
 claude plugin install skill-creator 2>/dev/null || warn "Skill Creator 플러그인 설치 실패"
