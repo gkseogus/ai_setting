@@ -58,7 +58,7 @@ ai_setting/
 | GitHub CLI | `gh mcp` (via `shuymn/gh-mcp`) | GitHub 이슈/PR/리포 관리 |
 | GWS CLI | `npx gws-mcp-server@latest` | Google Workspace (Drive, Sheets, Calendar, Gmail) |
 | Notion | `https://mcp.notion.com/mcp` (HTTP, OAuth) | Notion 페이지/DB 조회 및 편집 |
-| Atlassian | `https://mcp.atlassian.com/v1/sse` (SSE, OAuth) | Jira 이슈/프로젝트, Confluence 페이지 조회 및 생성 |
+| Atlassian | `https://mcp.atlassian.com/v1/mcp` (HTTP, OAuth) | Jira 이슈/프로젝트, Confluence 페이지 조회 및 생성 |
 | Skill Creator | `claude plugin install skill-creator` | 커스텀 스킬 생성 (플러그인) |
 
 ## 에이전트별 세팅
