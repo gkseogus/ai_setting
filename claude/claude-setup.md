@@ -152,7 +152,7 @@ claude plugin install figma --marketplace claude-plugins-official
 
 ## 5. 글로벌 CLAUDE.md
 
-`~/CLAUDE.md` — 모든 프로젝트에 적용되는 글로벌 규칙:
+`~/CLAUDE.md` — 모든 프로젝트에 적용되는 글로벌 규칙 (setup.sh가 자동 생성):
 
 ```markdown
 # Global Claude Code Rules
@@ -160,6 +160,15 @@ claude plugin install figma --marketplace claude-plugins-official
 ## Frontend Conventions
 프론트엔드(React/Next.js) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
 @~/ai_setting/template/frontend_conventions.md
+
+## Backend Conventions
+백엔드(FastAPI/Python) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
+@~/ai_setting/template/backend_conventions.md
+
+## Error Handling — 표면 vs 근본 판단
+모든 에러 / 버그 / 예외를 다룰 때 반드시 아래 룰(Triage → Root Cause → Fix → Verification → Report)을 따른다.
+정밀 검증이 필요한 상황에서는 `/root_cause` 슬래시 커맨드를 호출한다.
+@~/ai_setting/template/error_handling.md
 ```
 
 ## 6. 커스텀 슬래시 커맨드
@@ -194,6 +203,21 @@ claude plugin install figma --marketplace claude-plugins-official
 3. 컨벤션 위반 사항을 찾아 리스트업합니다.
 4. 사용자에게 위반 사항을 보여주고 수정 여부를 확인합니다.
 5. 승인된 항목에 대해 수정을 진행합니다.
+```
+
+### /ssh-rds-tunnel — RDS 터널 연결 (SSH/SSM)
+
+`~/.claude/commands/ssh-rds-tunnel.md`:
+
+등록된 RDS 목록에서 선택하거나 인자로 지정해 터널을 엽니다. 인프라별로 방식이 자동 분기됩니다:
+
+- **ssh** — 베스천 EC2 경유 SSH 터널 (reb_platform: `.pem` 키 + 22포트)
+- **ssm** — App EC2 경유 SSM 포트포워딩 (mealiq: 키·22포트 불필요, IAM 권한 + Session Manager Plugin만 필요)
+
+```bash
+/ssh-rds-tunnel                     # 목록에서 선택
+/ssh-rds-tunnel reb-platform-prod   # SSH 터널 (localhost:5432)
+/ssh-rds-tunnel mealiq-prod         # SSM 터널 (localhost:15433)
 ```
 
 ## 7. MCP 서버 등록
@@ -294,7 +318,7 @@ aws configure
 | 스킬 | 명령어 | 설명 |
 |------|--------|------|
 | create-pr | `/create-pr` | PR 템플릿 기준으로 커밋 분석 후 GitHub PR 자동 생성 |
-| ssm-rds | `/ssm-rds` | AWS SSM 포트포워딩으로 RDS 로컬 접속 터널 시작 |
+| ssm-rds | `/ssm-rds` | AWS SSM 포트포워딩으로 RDS 로컬 접속 터널 시작 (글로벌 `/ssh-rds-tunnel`이 ssh/ssm 둘 다 지원하므로 신규 프로젝트는 글로벌 커맨드 사용 권장) |
 
 ### 커스텀 스킬 추가 방법
 
