@@ -107,6 +107,9 @@ echo "  /ssh-rds-tunnel 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/notion_diary.md" ~/.claude/commands/notion_diary.md
 echo "  /notion_diary 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/weekly_report.md" ~/.claude/commands/weekly_report.md
+echo "  /weekly_report 커맨드 등록 완료"
+
 cp "$SCRIPT_DIR/commands/jira_project.md" ~/.claude/commands/jira_project.md
 echo "  /jira_project 커맨드 등록 완료"
 
