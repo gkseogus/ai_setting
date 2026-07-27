@@ -2,7 +2,7 @@
 
 ## 인자
 $ARGUMENTS — 모두 선택사항. 자유 텍스트로 받는다.
-- **출력 경로/파일명**: 예) `~/Desktop/reports`, `~/Desktop/2026-W30_주간보고.pdf`. 비어 있으면 `~/Desktop/주간보고_YYYY-MM-DD_YYYY-MM-DD.pdf` 로 저장한다.
+- **출력 경로/파일명**: 예) `~/Desktop/reports`, `~/Desktop/2026-W30_주간보고.pdf`. 비어 있으면 `~/Desktop/주간업무보고서_YYYY-MM-DD_MM-DD.pdf` 로 저장한다 (시작일은 연도 포함 `YYYY-MM-DD`, 종료일은 연도 없이 `MM-DD`. 예: `주간업무보고서_2026-07-20_07-24.pdf`).
 - **대상 주**: 예) `2026-W30`, 또는 그 주에 속한 날짜 `2026-07-20`. 비어 있으면 오늘이 속한 주로 잡는다.
 - **작성자**: 예) `작성자: 홍길동`. 비어 있으면 헤더의 작성자 칸을 비워 둔다.
 - 예시: `~/Desktop/reports 2026-W30 작성자: 홍길동`
@@ -82,11 +82,20 @@ $ARGUMENTS — 모두 선택사항. 자유 텍스트로 받는다.
 5. 합친 내용을 위 5개 섹션 규칙에 따라 분류한다. PR/이슈 링크가 있으면 완료 업무 항목 끝에 짧게 단다.
 6. 이번 주 일지가 하나도 없으면 그 사실을 사용자에게 알리고, git 로그로 대체할지 아니면 사용자가 직접 불러줄지 물어본 뒤 진행한다. (없는 내용을 지어내 채우지 않는다.)
 
+## 보고서 디자인 (Re:B Studios 템플릿 고정)
+- 디자인은 **고정 템플릿**을 쓴다: `~/Desktop/ai_setting/template/weekly_report_template.html` (브라운/크림 톤 Re:B Studios 양식).
+  - 이 파일을 복제해 `{{PLACEHOLDER}}` 와 `<!-- REPEAT ... -->` 블록만 이번 주 데이터로 채운다. `<style>` 는 절대 바꾸지 않는다.
+  - 템플릿 파일이 없으면 최소 대체 스타일(아래 "권장 스타일")로 만들되, 있으면 반드시 템플릿을 우선한다.
+- 구성 요소:
+  - **상단**: 브랜드 라벨(`RE:B STUDIOS · WEEKLY REPORT`) → 대형 타이틀 `주간 업무 보고서` → 기간(월~금) → `작성자 | 기준 | 작성일` → 두꺼운 다크 브라운 바.
+  - **KPI 카드 5개**: 일지에서 **실제로 도출 가능한 수치만** 넣는다. 기본 조합 = 진행 프로젝트 수 / 완료 세부작업 수(`- [x]` 묶음 개수) / 관련 PR 수 / 핵심 비즈니스 지표(비용 절감·인프라 자원 등) / 대표 결정 대기 수. 근거 없는 수치는 만들지 않는다.
+  - **섹션 1~5**: 위 5개 섹션과 1:1. 1번은 `①②③` 항목 + 날짜 뱃지, 2·4번은 `▪` 불릿(끝에 회색 PR/이슈 메타), 3번은 좌측 상태 태그 테이블(`p-wait/p-set/p-next/p-clean/p-check`), 5번은 원형 번호 + 좌측 액센트 카드.
+  - **푸터**: `Re:B Studios · YYYY년 M월 N주차 주간 업무 보고서 | 데이터 출처: ...` (중앙 정렬).
+- 권장 스타일(대체용): `@page { size: A4; margin: 16mm 15mm; }`, 본문 `font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;`, 인쇄 색 보존 `print-color-adjust: exact;`.
+
 ## PDF 생성 순서
-1. 위에서 정리한 보고서를 **HTML 파일**로 먼저 만든다(한글 폰트·A4 여백 지정). 임시 경로: `<출력 pdf 경로와 같은 폴더>/.<파일명>.html` 또는 `mktemp`.
-   - 권장 스타일: `@page { size: A4; margin: 20mm; }`, 본문 `font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif; font-size: 11pt; line-height: 1.6;`, 섹션 제목은 하단 보더로 구분, 목록은 `ul/li`.
-   - 헤더의 기간·작성자·작성일은 문서 최상단 표 또는 회색 박스로.
-2. 출력 경로를 정한다. 인자에 경로가 있으면 그것(디렉토리면 그 안에 기본 파일명), 없으면 `~/Desktop/주간보고_YYYY-MM-DD_YYYY-MM-DD.pdf`. 상위 폴더가 없으면 `mkdir -p`.
+1. 위 디자인 템플릿을 복제해 **HTML 파일**로 만든다. 임시 경로: `<출력 pdf 경로와 같은 폴더>/.<파일명>.html` 또는 `mktemp`. 채운 뒤 `{{`·`REPEAT` 흔적이 남지 않았는지 확인한다.
+2. 출력 경로를 정한다. 인자에 경로가 있으면 그것(디렉토리면 그 안에 기본 파일명), 없으면 `~/Desktop/주간업무보고서_YYYY-MM-DD_MM-DD.pdf` (시작일 연도 포함, 종료일 `MM-DD`). 상위 폴더가 없으면 `mkdir -p`.
 3. HTML → PDF 변환. 아래 순서로 사용 가능한 첫 번째 방법을 쓴다:
    - **(A) Chromium 계열 headless 인쇄 (1순위).** 아래 후보 중 존재하는 첫 바이너리로 실행:
      ```

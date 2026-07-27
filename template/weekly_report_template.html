@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!--
+  Re:B Studios 주간 업무 보고서 디자인 템플릿 (고정)
+  /weekly_report 커맨드가 이 파일을 복제해 아래 {{PLACEHOLDER}} 와
+  반복 블록(<!-- REPEAT ... -->) 을 이번 주 데이터로 채운 뒤 PDF 로 인쇄한다.
+  - 스타일(<style>)은 절대 바꾸지 않는다. 색/폰트/레이아웃 고정.
+  - 채우는 값만 교체한다. 근거 없는 항목은 만들지 않는다(해당 섹션 규칙 준수).
+
+  치환 토큰
+    {{PERIOD}}   기간   예) 2026. 07. 20 (월) — 07. 24 (금)
+    {{AUTHOR}}   작성자 예) 한대현 (없으면 공백)
+    {{SOURCE}}   기준   예) Notion 업무일지  (Jira 등 함께 쓰면 · 로 연결)
+    {{WRITTEN}}  작성일 예) 2026. 07. 24
+    {{FOOTER}}   푸터   예) Re:B Studios · 2026년 7월 4주차 주간 업무 보고서 | 데이터 출처: Notion 업무일지(2026-07-20~24)
+
+  KPI 카드(5개): 일지에서 실제로 도출 가능한 수치만. 예)
+    진행 프로젝트 수 / 완료 세부작업 수(- [x] 블록 수) / 관련 PR 수 /
+    핵심 비즈니스 지표(비용 절감·인프라 자원 등) / 대표 결정 대기 수
+  상태 태그 클래스(3번 섹션): p-wait(승인/회신대기) p-set(설정대기)
+    p-next(다음범위) p-clean(정리필요) p-check(확인필요) — 라벨은 자유(6자 내).
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>주간 업무 보고서</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brown-dark: #3a2f27;
+    --brown-title: #2a221d;
+    --brown-accent: #6b5544;
+    --cream-card: #f6f1ea;
+    --cream-soft: #f9f6f1;
+    --cream-border: #e8e0d4;
+    --label-gray: #9a8d7f;
+    --text: #2f2a26;
+    --body: #554d45;
+    --meta-gray: #9a8d7f;
+  }
+  body {
+    font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: var(--text);
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ===== Header ===== */
+  .brand { font-size: 8.5pt; letter-spacing: 4px; color: var(--label-gray); font-weight: 700; }
+  h1 { font-size: 27pt; font-weight: 800; color: var(--brown-title); letter-spacing: -0.5px; margin: 7px 0 9px; }
+  .subtitle { font-size: 13pt; font-weight: 700; color: var(--brown-dark); }
+  .meta-line { font-size: 9pt; color: var(--meta-gray); margin-top: 7px; }
+  .rule { height: 6px; background: var(--brown-dark); border-radius: 3px; margin-top: 15px; }
+
+  /* ===== KPI cards ===== */
+  .kpis { display: flex; gap: 10px; margin: 20px 0 6px; }
+  .kpi { flex: 1; background: var(--cream-card); border: 1px solid var(--cream-border); border-radius: 10px; padding: 15px 8px 12px; text-align: center; }
+  .kpi .num { font-size: 23pt; font-weight: 800; color: var(--brown-accent); line-height: 1.1; }
+  .kpi .lbl { font-size: 8pt; color: var(--label-gray); margin-top: 4px; letter-spacing: 0.2px; }
+
+  /* ===== Section header ===== */
+  .sec { background: var(--brown-dark); color: #fff; border-radius: 8px; padding: 8px 14px; margin: 22px 0 12px; font-size: 12pt; font-weight: 700; }
+  .sec .en { color: rgba(255,255,255,0.55); font-weight: 500; font-size: 9pt; margin-left: 6px; }
+
+  .intro { font-size: 10pt; color: var(--body); margin-bottom: 12px; }
+  .intro b { color: var(--text); }
+
+  /* ===== Section 1 numbered items ===== */
+  .item { margin-bottom: 11px; page-break-inside: avoid; }
+  .item .t { font-weight: 700; font-size: 10.5pt; color: var(--text); }
+  .badge { display: inline-block; background: #ece4d8; color: #6b5c4c; font-size: 8pt; font-weight: 600; padding: 1px 7px; border-radius: 4px; margin-left: 6px; vertical-align: 1.5px; }
+  .item .d { font-size: 9.5pt; color: var(--body); margin-top: 2px; }
+
+  /* ===== Bullet lists (sec 2 / 4) ===== */
+  .bul { list-style: none; }
+  .bul li { position: relative; padding-left: 15px; margin-bottom: 10px; page-break-inside: avoid; }
+  .bul li::before { content: "▪"; position: absolute; left: 0; top: 0; color: var(--brown-accent); }
+  .bul .t { font-weight: 700; color: var(--text); }
+  .bul .d { font-size: 9.5pt; color: var(--body); margin-top: 2px; }
+  .bul .m { color: var(--meta-gray); font-size: 8.5pt; }
+
+  /* ===== Section 3 status table ===== */
+  .note { font-size: 9pt; color: var(--meta-gray); margin-bottom: 10px; }
+  .stbl { border: 1px solid var(--cream-border); border-radius: 10px; overflow: hidden; }
+  .strow { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; border-top: 1px solid #efe9df; page-break-inside: avoid; }
+  .strow:first-child { border-top: none; }
+  .pill { flex: 0 0 62px; text-align: center; font-size: 8pt; font-weight: 700; padding: 3px 4px; border-radius: 5px; margin-top: 1px; }
+  .p-wait  { background: #f2dede; color: #9b5757; }
+  .p-set   { background: #efe6d3; color: #8a7043; }
+  .p-next  { background: #e5e2ef; color: #6d6796; }
+  .p-clean { background: #e0ecdd; color: #5f8060; }
+  .p-check { background: #f3ead6; color: #977f4a; }
+  .stc .t { font-weight: 700; color: var(--text); }
+  .stc .d { font-size: 9.5pt; color: var(--body); margin-top: 1px; }
+
+  /* ===== Section 5 decisions ===== */
+  .dec { display: flex; gap: 12px; align-items: flex-start; background: var(--cream-soft); border-left: 4px solid var(--brown-accent); border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; page-break-inside: avoid; }
+  .dec .n { flex: 0 0 23px; height: 23px; width: 23px; border-radius: 50%; background: var(--brown-dark); color: #fff; font-size: 10pt; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .dec .t { font-weight: 700; color: var(--text); }
+  .dec .d { font-size: 9.5pt; color: var(--body); margin-top: 2px; }
+
+  /* ===== Footer ===== */
+  .footer { margin-top: 28px; padding-top: 13px; border-top: 1px solid var(--cream-border); text-align: center; color: var(--meta-gray); font-size: 8.5pt; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="brand">R E : B &nbsp; S T U D I O S &nbsp; · &nbsp; W E E K L Y &nbsp; R E P O R T</div>
+<h1>주간 업무 보고서</h1>
+<div class="subtitle">{{PERIOD}}</div>
+<div class="meta-line">작성자: {{AUTHOR}} &nbsp;|&nbsp; 기준: {{SOURCE}} &nbsp;|&nbsp; 작성일: {{WRITTEN}}</div>
+<div class="rule"></div>
+
+<!-- KPI cards (정확히 5개, 일지에서 도출 가능한 수치만) -->
+<div class="kpis">
+  <!-- REPEAT kpi ×5 -->
+  <div class="kpi"><div class="num">{{NUM}}</div><div class="lbl">{{LABEL}}</div></div>
+  <!-- /REPEAT -->
+</div>
+
+<!-- Section 1 -->
+<div class="sec">1. 이번 주 진행 업무 <span class="en">/ Focus of the week</span></div>
+<div class="intro">{{INTRO}}</div>
+<!-- REPEAT item (프로젝트/작업 단위, 활동 관점) -->
+<div class="item">
+  <span class="t">① {{TITLE}}</span><span class="badge">{{DATE}}</span>
+  <div class="d">{{DESC}}</div>
+</div>
+<!-- /REPEAT -->
+
+<!-- Section 2 -->
+<div class="sec">2. 완료 업무 (결론) <span class="en">/ Completed &amp; shipped</span></div>
+<ul class="bul">
+  <!-- REPEAT li (- [x] 로 마무리된 묶음, 결과 관점. m=PR/이슈 링크 있으면) -->
+  <li>
+    <div class="t">{{TITLE}}</div>
+    <div class="d">{{DESC}} <span class="m">{{META}}</span></div>
+  </li>
+  <!-- /REPEAT -->
+</ul>
+
+<!-- Section 3 -->
+<div class="sec">3. 지연 중 · 확인이 필요한 업무 <span class="en">/ Open &amp; awaiting input</span></div>
+<div class="note">{{NOTE}}</div>
+<div class="stbl">
+  <!-- REPEAT strow (pill 클래스: p-wait/p-set/p-next/p-clean/p-check) -->
+  <div class="strow">
+    <div class="pill p-wait">{{TAG}}</div>
+    <div class="stc">
+      <div class="t">{{TITLE}}</div>
+      <div class="d">{{DESC}}</div>
+    </div>
+  </div>
+  <!-- /REPEAT -->
+</div>
+
+<!-- Section 4 -->
+<div class="sec">4. 다음 주 예정 업무 <span class="en">/ Next week ({{NEXT_START}}~)</span></div>
+<ul class="bul">
+  <!-- REPEAT li -->
+  <li>
+    <div class="t">{{TITLE}}</div>
+    <div class="d">{{DESC}}</div>
+  </li>
+  <!-- /REPEAT -->
+</ul>
+
+<!-- Section 5 -->
+<div class="sec">5. 대표 확인 / 결정이 필요한 사항 <span class="en">/ Needs CEO decision</span></div>
+<!-- REPEAT dec (번호 n 은 1부터 증가) -->
+<div class="dec">
+  <div class="n">{{N}}</div>
+  <div>
+    <div class="t">{{TITLE}}</div>
+    <div class="d">{{DESC}}</div>
+  </div>
+</div>
+<!-- /REPEAT -->
+
+<!-- Footer -->
+<div class="footer">{{FOOTER}}</div>
+
+</body>
+</html>
