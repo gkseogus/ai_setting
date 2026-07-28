@@ -1,3 +1,7 @@
 .DS_Store
 .omc/
 .claude/
+
+# Python (aeo_report_gen.py)
+__pycache__/
+*.pyc
