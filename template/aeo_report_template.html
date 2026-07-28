@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--
+  Re:B Studios AEO 지표 리포트 디자인 템플릿 (고정)
+  /aeo_report 커맨드가 aeo_report_gen.py 를 통해 이 파일을 채운 뒤 PDF 로 인쇄한다.
+  스타일(<style>)은 절대 바꾸지 않는다. 색/폰트/레이아웃 고정 (Re:B 브라운/크림 톤).
+
+  치환/반복 규칙은 aeo_report_gen.py 참고. 요약:
+  - 헤더/푸터/타일 토큰은 이중중괄호 자리표시자로 채운다 (SCOPE, TITLE, ENV, PERIOD_LABEL,
+    PERIOD_RANGE, TILE1~4 의 LABEL/VAL/SUB, SOURCE_URL, GENERATED, NOTE 등).
+  - 벤더 표는 REPEAT vendor 블록, 봇 표는 REPEAT bot 블록을 데이터 개수만큼 반복 렌더한다.
+  - 차트 카드는 BEGIN/END chart 선택 블록 — 차트 이미지가 있으면 유지, 없으면 제거된다.
+  주의: 이 문서 주석에는 반복/선택 블록의 실제 마커 문자열을 넣지 않는다(파서가 오인함).
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>AEO Bot Metrics</title>
+<style>
+  @page { size: A4; margin: 14mm 12mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brown-dark: #3A2C24;
+    --brown-accent: #6b5545;
+    --cream-card: #F6F3EC;
+    --cream-soft: #faf8f3;
+    --cream-border: #E8E3D3;
+    --track: #EEE9DE;
+    --label: #8a7d70;
+    --text: #141414;
+    --body: #55504a;
+    --meta: #a89e92;
+  }
+  body {
+    font-family: -apple-system, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    color: var(--text); background: #fff;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* Header */
+  .kicker { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); font-weight: 600; }
+  h1 { font-size: 23px; margin: 4px 0 6px; color: var(--brown-dark); letter-spacing: -0.3px; }
+  .meta { font-size: 12px; color: var(--body); line-height: 1.5; }
+  .meta b { color: var(--text); font-weight: 600; }
+  .rule { height: 3px; background: var(--brown-dark); border-radius: 2px; margin-top: 12px; }
+
+  /* Tiles */
+  .tiles { display: flex; gap: 10px; margin: 16px 0 18px; }
+  .tile { flex: 1; background: var(--cream-card); border: 1px solid var(--cream-border); border-radius: 10px; padding: 12px 14px; }
+  .tile .l { font-size: 10.5px; color: var(--label); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+  .tile .v { font-size: 22px; font-weight: 700; color: var(--brown-dark); margin-top: 3px; line-height: 1.15; }
+  .tile .v.sm { font-size: 15px; line-height: 1.5; }
+  .tile .s { font-size: 10.5px; color: #77706a; margin-top: 2px; }
+
+  /* Card / section */
+  .card { border: 1px solid var(--cream-border); border-radius: 10px; padding: 8px; margin-bottom: 20px; }
+  .card img { width: 100%; display: block; border-radius: 6px; }
+  .sec { font-size: 13px; font-weight: 700; color: var(--brown-dark); margin: 4px 0 8px; }
+  .sec .en { color: var(--meta); font-weight: 500; font-size: 10px; margin-left: 6px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  thead th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .05em;
+             color: var(--label); border-bottom: 1.5px solid var(--brown-dark); padding: 6px 8px; }
+  tbody td { padding: 5px 8px; border-bottom: 1px solid #efeae0; vertical-align: middle; }
+  tbody tr:nth-child(odd) { background: var(--cream-soft); }
+  td.rank { color: var(--meta); width: 22px; font-variant-numeric: tabular-nums; }
+  td.bot { font-weight: 600; color: var(--text); }
+  td.vendor { font-weight: 600; color: var(--text); }
+  td.bots { color: var(--body); font-size: 10px; }
+  td.req { width: 30%; }
+  .reqwrap { display: flex; align-items: center; gap: 8px; }
+  .reqnum { width: 42px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .bartrack { flex: 1; height: 7px; background: var(--track); border-radius: 4px; overflow: hidden; }
+  .barfill { height: 100%; background: linear-gradient(90deg, #6b5545, #3A2C24); border-radius: 4px; }
+  td.share { width: 60px; font-variant-numeric: tabular-nums; color: var(--body); }
+  td.cached { width: 20%; }
+  .cwrap { display: flex; align-items: center; gap: 8px; }
+  .cmeter { width: 56px; height: 6px; background: var(--track); border-radius: 4px; overflow: hidden; }
+  .cfill { height: 100%; border-radius: 4px; }
+  .cval { font-variant-numeric: tabular-nums; color: var(--body); }
+
+  /* Category tag */
+  .tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: .02em; }
+  .tag-ai     { background: #e7dccb; color: #6b4f3a; }
+  .tag-search { background: #dce6ee; color: #3f5a72; }
+  .tag-seo    { background: #efe6d3; color: #8a7043; }
+  .tag-social { background: #e6e2ef; color: #6d6796; }
+  .tag-other  { background: #ecebe7; color: #8a8078; }
+
+  .foot { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--cream-border);
+          font-size: 9.5px; color: var(--meta); line-height: 1.5; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="kicker">{{SCOPE}} · Vercel Observability</div>
+<h1>{{TITLE}}</h1>
+<div class="meta">
+  Environment <b>{{ENV}}</b> · Period <b>{{PERIOD_LABEL}}</b><br>
+  {{PERIOD_RANGE}}
+</div>
+<div class="rule"></div>
+
+<!-- Tiles -->
+<div class="tiles">
+  <div class="tile"><div class="l">{{TILE1_LABEL}}</div><div class="v">{{TILE1_VAL}}</div><div class="s">{{TILE1_SUB}}</div></div>
+  <div class="tile"><div class="l">{{TILE2_LABEL}}</div><div class="v">{{TILE2_VAL}}</div><div class="s">{{TILE2_SUB}}</div></div>
+  <div class="tile"><div class="l">{{TILE3_LABEL}}</div><div class="v">{{TILE3_VAL}}</div><div class="s">{{TILE3_SUB}}</div></div>
+  <div class="tile"><div class="l">{{TILE4_LABEL}}</div><div class="v sm">{{TILE4_VAL}}</div><div class="s">{{TILE4_SUB}}</div></div>
+</div>
+
+<!-- BEGIN chart -->
+<div class="sec">Edge Requests &amp; Firewall Actions <span class="en">/ {{PERIOD_LABEL}}</span></div>
+<div class="card"><img src="{{CHART_IMG}}" alt="Edge Requests chart"></div>
+<!-- END chart -->
+
+<!-- AI answer engines (AEO focus) -->
+<div class="sec">AI Answer Engines <span class="en">/ AEO 크롤러 벤더별 집계</span></div>
+<table>
+  <thead><tr><th>Vendor</th><th>Bots</th><th>Requests</th><th>Share of AI</th><th>Cached</th></tr></thead>
+  <tbody>
+    <!-- REPEAT vendor -->
+    <tr>
+      <td class="vendor">{{V_NAME}}</td>
+      <td class="bots">{{V_BOTS}}</td>
+      <td class="req"><div class="reqwrap"><span class="reqnum">{{V_REQ}}</span>
+        <div class="bartrack"><div class="barfill" style="width:{{V_BAR}}%"></div></div></div></td>
+      <td class="share">{{V_SHARE}}</td>
+      <td class="cached"><div class="cwrap"><div class="cmeter"><div class="cfill" style="width:{{V_CACHED_W}}%;background:{{V_CACHED_COLOR}}"></div></div><span class="cval">{{V_CACHED}}</span></div></td>
+    </tr>
+    <!-- /REPEAT vendor -->
+  </tbody>
+</table>
+
+<!-- Full bot breakdown -->
+<div class="sec" style="margin-top:20px">Bot Name Breakdown <span class="en">/ 전체 {{BOT_COUNT}}개 봇</span></div>
+<table>
+  <thead><tr><th>#</th><th>Bot Name</th><th>Type</th><th>Requests</th><th>Cached</th></tr></thead>
+  <tbody>
+    <!-- REPEAT bot -->
+    <tr>
+      <td class="rank">{{RANK}}</td>
+      <td class="bot">{{BOT}}</td>
+      <td><span class="tag tag-{{CAT}}">{{CAT_LABEL}}</span></td>
+      <td class="req"><div class="reqwrap"><span class="reqnum">{{REQ}}</span>
+        <div class="bartrack"><div class="barfill" style="width:{{BAR}}%"></div></div></div></td>
+      <td class="cached"><div class="cwrap"><div class="cmeter"><div class="cfill" style="width:{{CACHED_W}}%;background:{{CACHED_COLOR}}"></div></div><span class="cval">{{CACHED}}</span></div></td>
+    </tr>
+    <!-- /REPEAT bot -->
+  </tbody>
+</table>
+
+<div class="foot">
+  Source: {{SOURCE_URL}}<br>
+  Generated {{GENERATED}} · {{NOTE}}
+</div>
+
+</body>
+</html>
