@@ -453,14 +453,18 @@ if (posts.length === 0) {
 - E2E: Playwright.
 
 ### 파일 위치 & 네이밍
-- 컴포넌트/훅 테스트는 대상과 같은 폴더에 `*.test.ts(x)`로 둔다.
-- E2E는 `e2e/` 또는 `tests/e2e/`에 `*.spec.ts`로 둔다.
+- 모든 테스트는 `tests/` 아래에 두고 **유닛과 E2E를 구분**한다. `src/` 안에 테스트 파일을 두지 않는다.
+  - 유닛/컴포넌트: `tests/unit/**` — `src/` 구조를 미러링, `*.test.ts(x)`
+  - E2E(Playwright): `tests/e2e/**` — `*.spec.ts`
+- 테스트 헬퍼는 `tests/helpers/`, 셋업은 `tests/setup.ts`에 두고 `@tests/*` 별칭으로 import한다 (vitest alias + tsconfig paths 등록).
+- 테스트 전용 tsconfig(`tsconfig.test.json`)를 분리해 node 타입 등 테스트 전용 설정이 앱 코드에 새지 않게 한다.
 
 ```
 src/components/post/PostCard.tsx
-src/components/post/PostCard.test.tsx   # 같은 폴더
+tests/unit/components/post/PostCard.test.tsx   # src 구조 미러링
 src/hooks/usePosts.ts
-src/hooks/usePosts.test.ts
+tests/unit/hooks/usePosts.test.ts
+tests/e2e/checkout.spec.ts                     # Playwright
 ```
 
 ### 작성 규칙
