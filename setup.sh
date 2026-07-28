@@ -116,6 +116,9 @@ echo "  /jira_project 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/root_cause.md" ~/.claude/commands/root_cause.md
 echo "  /root_cause 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/aeo_report.md" ~/.claude/commands/aeo_report.md
+echo "  /aeo_report 커맨드 등록 완료"
+
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
 echo "  OMC 플러그인 설치..."
