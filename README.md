@@ -21,7 +21,10 @@ ai_setting/
 │   ├── frontend_conventions.md     # 프론트엔드 글로벌 컨벤션 (14항목, 문서 업데이트·테스트 코드 포함)
 │   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션 (11항목, 상수 분리·문서 업데이트·테스트 코드 포함)
 │   ├── error_handling.md           # 에러 처리 룰 (표면 vs 근본 판단, 5단계)
-│   └── pull_request_template.md    # PR 템플릿 원본
+│   ├── pull_request_template.md    # PR 템플릿 원본
+│   ├── weekly_report_template.html # /weekly_report PDF 고정 디자인 (Re:B 톤)
+│   ├── aeo_report_template.html    # /aeo_report PDF 고정 디자인 (Re:B 톤)
+│   └── aeo_report_gen.py           # /aeo_report 봇 분류·AEO 지표 계산·템플릿 채우기 생성기
 ├── commands/                       # 커스텀 슬래시 커맨드 (에이전트 공통)
 │   ├── commit.md                   # /commit 커맨드
 │   ├── create_pr.md                # /create_pr 커맨드
@@ -31,7 +34,8 @@ ai_setting/
 │   ├── notion_diary.md             # /notion_diary 커맨드
 │   ├── weekly_report.md            # /weekly_report 커맨드 (노션 일지 → 주간 보고서 PDF)
 │   ├── jira_project.md             # /jira_project 커맨드
-│   └── root_cause.md               # /root_cause 커맨드 (에러 근본 원인 추적 + 검증)
+│   ├── root_cause.md               # /root_cause 커맨드 (에러 근본 원인 추적 + 검증)
+│   └── aeo_report.md               # /aeo_report 커맨드 (Vercel Bot Name → AEO 지표 PDF)
 ├── claude/                         # Claude Code 세팅
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
 │   └── settings.local.json         # 권한 설정 템플릿
@@ -47,7 +51,7 @@ ai_setting/
 | 3 | `~/.claude/settings.json` 생성 (플러그인, HUD, 환경변수) |
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
-| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause` 슬래시 커맨드 등록 |
+| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report` 슬래시 커맨드 등록 |
 | 7 | OMC, Figma 플러그인 설치 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
 
@@ -81,3 +85,4 @@ ai_setting/
 | `/weekly_report` | 이번 주(월~금) 노션 일지를 모아 대표 보고용 주간 업무 보고서(진행/완료·결론/지연·확인 필요/다음 주 예정/대표 결정 사항)를 평어·개조식으로 재구성해 PDF(기본 `~/Desktop`, 인자로 경로 지정)로 저장 |
 | `/jira_project` | 새 기능/이니셔티브 단위로 Jira 에 Epic 1개 + 하위 Story/Task 트리를 한 번에 등록 (기본 프로젝트 `KAN`) |
 | `/root_cause` | 에러/버그 발생 시 "뿌리 뽑기 vs 싹 자르기" Triage → 근본 원인 추적(5 Whys + 유사 패턴) → 수정 → 검증(증상 재현 불가/유사/회귀/테스트) → 5항목 보고 |
+| `/aeo_report` | Vercel Observability Edge Requests(Bot Name) → AEO 지표 리포트 PDF. AI 답변엔진(OpenAI/Anthropic/Google/Perplexity 등) 크롤러 유입·점유율·캐시율을 벤더별 집계 + 전체 봇 분류(AI/Search/SEO/Social/Other). 기본 `~/Desktop`, 인자로 프로젝트/기간/경로 지정 |
