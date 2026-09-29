@@ -11,7 +11,7 @@ NC='\033[0m'
 step() { echo -e "\n${GREEN}[$1/$TOTAL] $2${NC}"; }
 warn() { echo -e "${YELLOW}⚠ $1${NC}"; }
 
-TOTAL=8
+TOTAL=9
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # 1. Claude Code 설치 확인
@@ -122,6 +122,9 @@ echo "  /aeo_report 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/type_error_fix.md" ~/.claude/commands/type_error_fix.md
 echo "  /type_error_fix 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/design_loop.md" ~/.claude/commands/design_loop.md
+echo "  /design_loop 커맨드 등록 완료"
+
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
 echo "  OMC 플러그인 설치..."
@@ -155,6 +158,24 @@ claude mcp add --transport http atlassian -s user https://mcp.atlassian.com/v1/m
 echo "  Skill Creator 플러그인 설치..."
 claude plugin install skill-creator 2>/dev/null || warn "Skill Creator 플러그인 설치 실패"
 
+# 9. 디자인 스택
+step 9 "디자인 스택 (taste-skill, Impeccable, Framelink)"
+
+echo "  taste-skill 설치..."
+npx -y skills add leonxlnx/taste-skill --skill design-taste-frontend --agent claude-code -g -y 2>/dev/null || warn "taste-skill 설치 실패"
+
+echo "  Impeccable 플러그인 설치..."
+claude plugin marketplace add pbakaus/impeccable 2>/dev/null || true
+claude plugin install impeccable@impeccable 2>/dev/null || warn "Impeccable 설치 실패 (/plugin 에서 수동 설치)"
+
+echo "  Framelink(Figma) MCP 등록..."
+# 공식 Figma MCP 는 무료(Starter) 플랜에서 월 6회 한도 → 읽기는 Framelink(PAT, REST API)로 처리
+if [ -n "$FIGMA_API_KEY" ]; then
+  claude mcp add framelink -s user -e FIGMA_API_KEY="$FIGMA_API_KEY" -- npx -y figma-developer-mcp --stdio --no-telemetry 2>/dev/null || warn "Framelink MCP 등록 실패"
+else
+  warn "FIGMA_API_KEY 미설정 — Framelink 등록 건너뜀 (export FIGMA_API_KEY=... 후 재실행)"
+fi
+
 echo ""
 echo -e "${GREEN}=== 세팅 완료! ===${NC}"
 echo ""
@@ -165,3 +186,6 @@ echo "  3. /oh-my-claudecode:hud setup (HUD 수동 설정 시)"
 echo "  4. GWS CLI 인증: npx gws auth login (Google Workspace 사용 시)"
 echo "  5. Notion MCP 인증: Claude Code에서 /mcp 실행 후 notion 항목 OAuth 인증"
 echo "  6. Atlassian MCP 인증: Claude Code에서 /mcp 실행 후 atlassian 항목 OAuth 인증"
+echo "  7. Figma: PAT 발급(Settings > Security > Personal access tokens) → export FIGMA_API_KEY=... → ./setup.sh 재실행"
+echo "  8. Figma 공식 MCP 인증: /mcp 실행 후 plugin:figma 항목 OAuth 인증 (쓰기 전용, 무료 월 6회)"
+echo "  9. 프론트 프로젝트 루트에서 /impeccable init 1회 실행"
