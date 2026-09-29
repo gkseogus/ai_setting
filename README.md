@@ -36,7 +36,8 @@ ai_setting/
 │   ├── jira_project.md             # /jira_project 커맨드
 │   ├── root_cause.md               # /root_cause 커맨드 (에러 근본 원인 추적 + 검증)
 │   ├── aeo_report.md               # /aeo_report 커맨드 (Vercel Bot Name → AEO 지표 PDF)
-│   └── type_error_fix.md           # /type_error_fix 커맨드 (타입 진단 근본 수정 + pyright 검증)
+│   ├── type_error_fix.md           # /type_error_fix 커맨드 (타입 진단 근본 수정 + pyright 검증)
+│   └── design_loop.md              # /design_loop 커맨드 (Figma → taste 구현 → Playwright 캡처 → Impeccable 검수)
 ├── claude/                         # Claude Code 세팅
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
 │   └── settings.local.json         # 권한 설정 템플릿
@@ -52,9 +53,10 @@ ai_setting/
 | 3 | `~/.claude/settings.json` 생성 (플러그인, HUD, 환경변수) |
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
-| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix` 슬래시 커맨드 등록 |
+| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix`, `/design_loop` 슬래시 커맨드 등록 |
 | 7 | OMC, Figma 플러그인 설치 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
+| 9 | 디자인 스택: taste-skill(`design-taste-frontend`), Impeccable 플러그인, Framelink(Figma) MCP (`FIGMA_API_KEY` 있을 때만) |
 
 ## MCP 서버
 
@@ -65,6 +67,8 @@ ai_setting/
 | GWS CLI | `npx gws-mcp-server@latest` | Google Workspace (Drive, Sheets, Calendar, Gmail) |
 | Notion | `https://mcp.notion.com/mcp` (HTTP, OAuth) | Notion 페이지/DB 조회 및 편집 |
 | Atlassian | `https://mcp.atlassian.com/v1/mcp` (HTTP, OAuth) | Jira 이슈/프로젝트, Confluence 페이지 조회 및 생성 |
+| Framelink (Figma) | `npx -y figma-developer-mcp --stdio` (env `FIGMA_API_KEY`) | Figma 디자인 **읽기** — REST API 기반, 무료 플랜 호출 제한 없음 |
+| Figma 공식 | `figma` 플러그인 (`https://mcp.figma.com/mcp`, OAuth) | Figma **쓰기**(`use_figma`) — 무료(Starter) 플랜 **월 6회** 한도 |
 | Skill Creator | `claude plugin install skill-creator` | 커스텀 스킬 생성 (플러그인) |
 
 ## 에이전트별 세팅
@@ -88,3 +92,29 @@ ai_setting/
 | `/root_cause` | 에러/버그 발생 시 "뿌리 뽑기 vs 싹 자르기" Triage → 근본 원인 추적(5 Whys + 유사 패턴) → 수정 → 검증(증상 재현 불가/유사/회귀/테스트) → 5항목 보고 |
 | `/aeo_report` | Vercel Observability Edge Requests(Bot Name) → AEO 지표 리포트 PDF. AI 답변엔진(OpenAI/Anthropic/Google/Perplexity 등) 크롤러 유입·점유율·캐시율을 벤더별 집계 + 전체 봇 분류(AI/Search/SEO/Social/Other). 기본 `~/Desktop`, 인자로 프로젝트/기간/경로 지정 |
 | `/type_error_fix` | Pylance/pyright 타입 진단을 `# type: ignore` 없이 근본 수정 — Triage(런타임 버그 vs 타입 계약 누락) → Unknown 발원지 추적 → 패턴 카탈로그(Protocol 바운드, Optional 좁히기, overload 등) 적용 → pyright CLI 0 errors + pytest 런타임 불변 검증 → 5항목 보고 |
+| `/design_loop` | Figma URL(또는 설명) → Framelink 로 읽기 → `design-taste-frontend` 규칙 + 프론트 컨벤션으로 구현 → Playwright 375/1440 캡처 → `/impeccable audit`·`polish` → visual-verdict 로 원본 비교(최대 3회). 공식 Figma MCP 는 명시 요청 + 동의 시에만 사용 |
+
+## 디자인 스택
+
+| 도구 | 역할 | 설치 |
+|------|------|------|
+| taste-skill | 레이아웃·타이포·모션·간격 "취향" 규칙 (스킬 `design-taste-frontend`) | `npx -y skills add leonxlnx/taste-skill --skill design-taste-frontend --agent claude-code -g -y` |
+| Impeccable | 디자인 검수 커맨드 (`/impeccable audit`, `/impeccable polish`, `/impeccable critique` 등) | `claude plugin marketplace add pbakaus/impeccable` → `claude plugin install impeccable@impeccable` |
+| Framelink | Figma 읽기 (무제한) | 아래 PAT 설정 후 `./setup.sh` 재실행 |
+| Figma 공식 MCP | Figma 쓰기 (월 6회) | `/mcp` → `plugin:figma` OAuth |
+| Playwright MCP | 스크린샷·콘솔 확인 | 8단계에서 등록됨 |
+
+**규칙 우선순위**: 프로젝트 컨벤션(`template/frontend_conventions.md`) > taste-skill > Impeccable.
+
+### 최초 설정
+1. Figma → Settings → Security → Personal access tokens 에서 토큰 발급 (File content: Read)
+2. `export FIGMA_API_KEY=<토큰>` 후 `./setup.sh` 재실행 (토큰은 저장소에 커밋하지 않는다), 또는 단독 등록:
+   ```bash
+   claude mcp add framelink -s user -e FIGMA_API_KEY=$FIGMA_API_KEY -- npx -y figma-developer-mcp --stdio --no-telemetry
+   ```
+3. 프론트 프로젝트 루트에서 `/impeccable init` 1회 실행
+
+### 사용 예시
+```
+/design_loop https://www.figma.com/design/AbC123/App?node-id=12-34 http://localhost:5173
+```
