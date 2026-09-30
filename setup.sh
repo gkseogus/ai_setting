@@ -125,6 +125,9 @@ echo "  /type_error_fix 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/design_loop.md" ~/.claude/commands/design_loop.md
 echo "  /design_loop 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/final_test.md" ~/.claude/commands/final_test.md
+echo "  /final_test 커맨드 등록 완료"
+
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
 echo "  OMC 플러그인 설치..."
