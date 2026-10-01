@@ -72,6 +72,9 @@ step 5 "글로벌 CLAUDE.md 생성"
 cat > ~/CLAUDE.md << CLAUDEMD
 # Global Claude Code Rules
 
+## Language
+사용자에게 보고·답변할 때만 한국어로 한다. 코드·주석·커밋 메시지·문서 등 산출물의 언어는 기존 프로젝트 관례를 따른다.
+
 ## Frontend Conventions
 프론트엔드(React/Next.js) 프로젝트 작업 시 아래 컨벤션을 반드시 따른다.
 @$SCRIPT_DIR/template/frontend_conventions.md
