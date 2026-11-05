@@ -458,6 +458,7 @@ if (posts.length === 0) {
   - E2E(Playwright): `tests/e2e/**` — `*.spec.ts`
 - 테스트 헬퍼는 `tests/helpers/`, 셋업은 `tests/setup.ts`에 두고 `@tests/*` 별칭으로 import한다 (vitest alias + tsconfig paths 등록).
 - 테스트 전용 tsconfig(`tsconfig.test.json`)를 분리해 node 타입 등 테스트 전용 설정이 앱 코드에 새지 않게 한다.
+- 이미 `e2e/unit/**`(유닛)·`e2e/*.spec.ts`(E2E) 구조로 자리 잡은 저장소는 옮기지 않고 그 구조를 유지한다. 이때 헬퍼는 `e2e/unit/helpers/`, 셋업은 저장소 루트 `vitest.setup.ts` 에 두고 `@tests/*` 별칭은 `e2e/*` 를 가리킨다. `src/` 안에 두지 않는 규칙과 `tsconfig.test.json` 분리는 똑같이 적용한다. 새 저장소는 `tests/` 구조로 시작한다.
 
 ```
 src/components/post/PostCard.tsx
