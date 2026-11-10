@@ -38,7 +38,8 @@ ai_setting/
 │   ├── aeo_report.md               # /aeo_report 커맨드 (Vercel Bot Name → AEO 지표 PDF)
 │   ├── type_error_fix.md           # /type_error_fix 커맨드 (타입 진단 근본 수정 + pyright 검증)
 │   ├── design_loop.md              # /design_loop 커맨드 (Figma → taste 구현 → Playwright 캡처 → Impeccable 검수)
-│   └── final_test.md               # /final_test 커맨드 (운영 스모크 + 회귀 테스트 최종 판정)
+│   ├── final_test.md               # /final_test 커맨드 (운영 스모크 + 회귀 테스트 최종 판정)
+│   └── slack_share.md              # /slack_share 커맨드 (작업·배포 슬랙 공유 글 추천)
 ├── claude/                         # Claude Code 세팅
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
 │   └── settings.local.json         # 권한 설정 템플릿
@@ -54,7 +55,7 @@ ai_setting/
 | 3 | `~/.claude/settings.json` 생성 (플러그인, HUD, 환경변수) |
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
-| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix`, `/design_loop`, `/final_test` 슬래시 커맨드 등록 |
+| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix`, `/design_loop`, `/final_test`, `/slack_share` 슬래시 커맨드 등록 |
 | 7 | OMC, Figma 플러그인 설치 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
 | 9 | 디자인 스택: taste-skill(`design-taste-frontend`), Impeccable 플러그인, Framelink(Figma) MCP (`FIGMA_API_KEY` 있을 때만) |
@@ -95,6 +96,7 @@ ai_setting/
 | `/type_error_fix` | Pylance/pyright 타입 진단을 `# type: ignore` 없이 근본 수정 — Triage(런타임 버그 vs 타입 계약 누락) → Unknown 발원지 추적 → 패턴 카탈로그(Protocol 바운드, Optional 좁히기, overload 등) 적용 → pyright CLI 0 errors + pytest 런타임 불변 검증 → 5항목 보고 |
 | `/design_loop` | Figma URL(또는 설명) → Framelink 로 읽기 → `design-taste-frontend` 규칙 + 프론트 컨벤션으로 구현 → Playwright 375/1440 캡처 → `/impeccable audit`·`polish` → visual-verdict 로 원본 비교(최대 3회). 공식 Figma MCP 는 명시 요청 + 동의 시에만 사용 |
 | `/final_test` | 운영 최종 검증 — 변경 범위(`--since` 기준 git diff) 분석 → 스모크/회귀 체크리스트 승인 → 운영 **읽기 전용** 스모크(헬스체크·핵심 API·Playwright 375/1440 콘솔·네트워크 에러) → 회귀(pytest/vitest/CI 결과 + 읽기 전용 E2E + 변경 기능 수동 흐름) → PASS/FAIL/SKIP 표 + P0~P2 판정(롤백/핫픽스 권고). 쓰기 요청은 항목별 동의 필수, 수정은 `/root_cause` 로 위임 |
+| `/slack_share` | 작업·배포 내용을 슬랙 공유 글로 추천 — 유형(`배포` 프로젝트 채널 확인 요청 / `공지` 전사 `@channel` / `결과` 검증·논의 스레드)별 양식, 첫 문장 존댓말 + 불릿 음슴체, 채널을 주면 내 최근 글로 멘션·톤을 맞춤. 출력은 슬랙에 그대로 붙여 넣는 마크다운 원문(`-` 3단 리스트, `@이름` 멘션) + 확인 필요 목록, 슬랙 직접 전송은 명시 요청 시만 |
 
 ## 디자인 스택
 
@@ -124,4 +126,10 @@ ai_setting/
 ### /final_test 사용 예시
 ```
 /final_test https://app.example.com https://api.example.com --since v1.4.0
+```
+
+### /slack_share 사용 예시
+```
+/slack_share 배포 #98_펫시어지 오늘 커밋
+/slack_share 공지 상품게시 기능 출시
 ```
