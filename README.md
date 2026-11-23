@@ -56,7 +56,7 @@ ai_setting/
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
 | 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix`, `/design_loop`, `/final_test`, `/slack_share` 슬래시 커맨드 등록 |
-| 7 | OMC, Figma 플러그인 설치 |
+| 7 | OMC, Figma, Product Management(기획) 플러그인 설치 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
 | 9 | 디자인 스택: taste-skill(`design-taste-frontend`), Impeccable 플러그인, Framelink(Figma) MCP (`FIGMA_API_KEY` 있을 때만) |
 
@@ -97,6 +97,28 @@ ai_setting/
 | `/design_loop` | Figma URL(또는 설명) → Framelink 로 읽기 → `design-taste-frontend` 규칙 + 프론트 컨벤션으로 구현 → Playwright 375/1440 캡처 → `/impeccable audit`·`polish` → visual-verdict 로 원본 비교(최대 3회). 공식 Figma MCP 는 명시 요청 + 동의 시에만 사용 |
 | `/final_test` | 운영 최종 검증 — 변경 범위(`--since` 기준 git diff) 분석 → 스모크/회귀 체크리스트 승인 → 운영 **읽기 전용** 스모크(헬스체크·핵심 API·Playwright 375/1440 콘솔·네트워크 에러) → 회귀(pytest/vitest/CI 결과 + 읽기 전용 E2E + 변경 기능 수동 흐름) → PASS/FAIL/SKIP 표 + P0~P2 판정(롤백/핫픽스 권고). 쓰기 요청은 항목별 동의 필수, 수정은 `/root_cause` 로 위임 |
 | `/slack_share` | 작업·배포 내용을 슬랙 공유 글로 추천 — 유형(`배포` 프로젝트 채널 확인 요청 / `공지` 전사 `@channel` / `결과` 검증·논의 스레드)별 양식, 첫 문장 존댓말 + 불릿 음슴체, 채널을 주면 내 최근 글로 멘션·톤을 맞춤. 출력은 슬랙에 그대로 붙여 넣는 마크다운 원문(`-` 3단 리스트, `@이름` 멘션) + 확인 필요 목록, 슬랙 직접 전송은 명시 요청 시만 |
+
+## 기획 플러그인
+
+Anthropic 공식 `product-management` 플러그인 (`anthropics/knowledge-work-plugins`). 7단계에서 설치된다.
+
+```bash
+claude plugin marketplace add anthropics/knowledge-work-plugins
+claude plugin install product-management@knowledge-work-plugins
+```
+
+| 스킬 | 용도 |
+|------|------|
+| `/product-management:write-spec` | 기획서·PRD 작성 |
+| `/product-management:roadmap-update` | 로드맵 갱신 |
+| `/product-management:sprint-planning` | 스프린트 계획 |
+| `/product-management:stakeholder-update` | 이해관계자 보고 글 |
+| `/product-management:synthesize-research` | 사용자 리서치 종합 |
+| `/product-management:competitive-brief` | 경쟁사 분석 |
+| `/product-management:metrics-review` | 지표 리뷰 |
+| `/product-management:product-brainstorming`, `/product-management:brainstorm` | 아이디어 발산 |
+
+플러그인이 MCP 서버 16개(Slack, Linear, Asana, Notion, Atlassian, Figma, Amplitude 등)를 함께 등록한다. 쓰는 것만 `/mcp` 에서 인증하고 나머지는 그대로 둔다.
 
 ## 디자인 스택
 
