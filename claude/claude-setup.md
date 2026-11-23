@@ -37,6 +37,15 @@ claude plugin install oh-my-claudecode --marketplace omc
 claude plugin install figma --marketplace claude-plugins-official
 ```
 
+### Product Management (기획자용 스킬)
+
+```bash
+claude plugin marketplace add anthropics/knowledge-work-plugins
+claude plugin install product-management@knowledge-work-plugins
+```
+
+`/product-management:write-spec`(기획서), `roadmap-update`, `sprint-planning`, `stakeholder-update`, `synthesize-research`, `competitive-brief`, `metrics-review`, `product-brainstorming` 스킬이 추가된다.
+
 ## 3. settings.json
 
 `~/.claude/settings.json` 에 아래 내용 저장:
