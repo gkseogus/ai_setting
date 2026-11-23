@@ -140,6 +140,9 @@ echo "  OMC 플러그인 설치..."
 claude plugin install oh-my-claudecode --marketplace omc 2>/dev/null || warn "OMC 플러그인 설치 실패 (수동 설치 필요)"
 echo "  Figma 플러그인 설치..."
 claude plugin install figma --marketplace claude-plugins-official 2>/dev/null || warn "Figma 플러그인 설치 실패 (수동 설치 필요)"
+echo "  Product Management(기획) 플러그인 설치..."
+claude plugin marketplace add anthropics/knowledge-work-plugins 2>/dev/null || true
+claude plugin install product-management@knowledge-work-plugins 2>/dev/null || warn "Product Management 플러그인 설치 실패 (/plugin 에서 수동 설치)"
 
 # 8. MCP 서버 등록
 step 8 "MCP 서버 등록"
