@@ -146,6 +146,7 @@ claude plugin install figma --marketplace claude-plugins-official 2>/dev/null ||
 echo "  Product Management(기획) 플러그인 설치..."
 claude plugin marketplace add anthropics/knowledge-work-plugins 2>/dev/null || true
 claude plugin install product-management@knowledge-work-plugins 2>/dev/null || warn "Product Management 플러그인 설치 실패 (/plugin 에서 수동 설치)"
+bash "$SCRIPT_DIR/claude/product-management-ko.sh" || warn "Product Management 설명 한글화 실패 (플러그인 설치 후 claude/product-management-ko.sh 재실행)"
 
 # 8. MCP 서버 등록
 step 8 "MCP 서버 등록"
