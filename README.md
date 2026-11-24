@@ -43,6 +43,7 @@ ai_setting/
 │   └── security_daily.md           # /security_daily 커맨드 (최신 보안 이슈 점검 → 노션 데일리 보고서)
 ├── claude/                         # Claude Code 세팅
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
+│   ├── product-management-ko.sh    # 기획 플러그인 스킬 설명 한글화
 │   └── settings.local.json         # 권한 설정 템플릿
 └── README.md
 ```
@@ -57,7 +58,7 @@ ai_setting/
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
 | 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
 | 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix`, `/design_loop`, `/final_test`, `/slack_share`, `/security_daily` 슬래시 커맨드 등록 |
-| 7 | OMC, Figma, Product Management(기획) 플러그인 설치 |
+| 7 | OMC, Figma, Product Management(기획) 플러그인 설치 + 기획 플러그인 스킬 설명 한글화 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
 | 9 | 디자인 스택: taste-skill(`design-taste-frontend`), Impeccable 플러그인, Framelink(Figma) MCP (`FIGMA_API_KEY` 있을 때만) |
 
@@ -119,6 +120,12 @@ claude plugin install product-management@knowledge-work-plugins
 | `/product-management:competitive-brief` | 경쟁사 분석 |
 | `/product-management:metrics-review` | 지표 리뷰 |
 | `/product-management:product-brainstorming`, `/product-management:brainstorm` | 아이디어 발산 |
+
+스킬 설명(`description`)은 원래 영어라서 7단계에서 `claude/product-management-ko.sh` 가 한글로 바꾼다. 플러그인이 새 버전으로 올라가면 영어로 돌아가므로 그때 다시 실행한다 (새 세션부터 적용).
+
+```bash
+./claude/product-management-ko.sh
+```
 
 플러그인이 MCP 서버 16개(Slack, Linear, Asana, Notion, Atlassian, Figma, Amplitude 등)를 함께 등록한다. 쓰는 것만 `/mcp` 에서 인증하고 나머지는 그대로 둔다.
 
