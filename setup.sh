@@ -134,6 +134,9 @@ echo "  /final_test 커맨드 등록 완료"
 cp "$SCRIPT_DIR/commands/slack_share.md" ~/.claude/commands/slack_share.md
 echo "  /slack_share 커맨드 등록 완료"
 
+cp "$SCRIPT_DIR/commands/security_daily.md" ~/.claude/commands/security_daily.md
+echo "  /security_daily 커맨드 등록 완료"
+
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
 echo "  OMC 플러그인 설치..."
