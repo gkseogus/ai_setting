@@ -46,6 +46,12 @@ claude plugin install product-management@knowledge-work-plugins
 
 `/product-management:write-spec`(기획서), `roadmap-update`, `sprint-planning`, `stakeholder-update`, `synthesize-research`, `competitive-brief`, `metrics-review`, `product-brainstorming` 스킬이 추가된다.
 
+스킬 설명은 원래 영어다. 아래 스크립트로 한글로 바꾼다 (setup.sh 가 자동 실행, 플러그인 업데이트 후에는 다시 실행).
+
+```bash
+./claude/product-management-ko.sh
+```
+
 ## 3. settings.json
 
 `~/.claude/settings.json` 에 아래 내용 저장:
