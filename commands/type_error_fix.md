@@ -1,7 +1,7 @@
 Pylance / pyright / mypy 정적 타입 진단("인수 형식을 알 수 없습니다", "부분적으로 알 수 없습니다", reportUnknown*, reportGeneralTypeIssues 등)을 `# type: ignore` 로 침묵시키지 않고 **타입 계약 누락이라는 근본 원인** 수준에서 수정하는 워크플로우.
 
 ## 글로벌 룰 (표면 vs 근본 판단 준용)
-@/Users/hdh/Desktop/ai_setting/template/error_handling.md
+@{{AI_SETTING_DIR}}/template/error_handling.md
 
 ---
 
@@ -49,7 +49,7 @@ Pylance / pyright / mypy 정적 타입 진단("인수 형식을 알 수 없습�
 
 ---
 
-## 사례: SQLAlchemy 제네릭 쿼리 (2026-09-21, reb_platform_backend)
+## 사례: SQLAlchemy 제네릭 쿼리 (2026-09-21, FastAPI 백엔드)
 
 - **증상**: `db.query(model).filter(stale)` 에서 "인수가 'filter' 함수의 'criterion' 매개 변수에 해당합니다 — 인수 형식을 알 수 없습니다".
 - **발원지**: `JobT = TypeVar("JobT", bound=Base)`. `Base`(DeclarativeBase) 에는 큐 컬럼이 선언돼 있지 않아 `model.status` 등 모든 클래스 속성 접근이 Unknown → 비교식 → filter 인자로 전파.
