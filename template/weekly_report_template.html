@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <!--
-  Re:B Studios 주간 업무 보고서 디자인 템플릿 (고정)
+  주간 업무 보고서 디자인 템플릿 (고정)
   /weekly_report 커맨드가 이 파일을 복제해 아래 {{PLACEHOLDER}} 와
-  반복 블록(<!-- REPEAT ... -->) 을 이번 주 데이터로 채운 뒤 PDF 로 인쇄한다.
+  반복 블록(REPEAT 주석으로 감싼 부분)을 이번 주 데이터로 채운 뒤 PDF 로 인쇄한다.
   - 스타일(<style>)은 절대 바꾸지 않는다. 색/폰트/레이아웃 고정.
   - 채우는 값만 교체한다. 근거 없는 항목은 만들지 않는다(해당 섹션 규칙 준수).
 
   치환 토큰
+    {{BRAND_LABEL}} 상단 자간 라벨 예) A C M E &nbsp; I N C. &nbsp; · &nbsp; W E E K L Y &nbsp; R E P O R T (브랜드 없으면 W E E K L Y &nbsp; R E P O R T)
     {{PERIOD}}   기간   예) 2026. 07. 20 (월) — 07. 24 (금)
     {{AUTHOR}}   작성자 예) 홍길동 (없으면 공백)
     {{SOURCE}}   기준   예) Notion 업무일지  (Jira 등 함께 쓰면 · 로 연결)
     {{WRITTEN}}  작성일 예) 2026. 07. 24
-    {{FOOTER}}   푸터   예) Re:B Studios · 2026년 7월 4주차 주간 업무 보고서 | 데이터 출처: Notion 업무일지(2026-07-20~24)
+    {{FOOTER}}   푸터   예) Acme Inc. · 2026년 7월 4주차 주간 업무 보고서 | 데이터 출처: Notion 업무일지(2026-07-20~24)
 
   KPI 카드(5개): 일지에서 실제로 도출 가능한 수치만. 예)
     진행 프로젝트 수 / 완료 세부작업 수(- [x] 블록 수) / 관련 PR 수 /
@@ -109,7 +110,7 @@
 <body>
 
 <!-- Header -->
-<div class="brand">R E : B &nbsp; S T U D I O S &nbsp; · &nbsp; W E E K L Y &nbsp; R E P O R T</div>
+<div class="brand">{{BRAND_LABEL}}</div>
 <h1>주간 업무 보고서</h1>
 <div class="subtitle">{{PERIOD}}</div>
 <div class="meta-line">작성자: {{AUTHOR}} &nbsp;|&nbsp; 기준: {{SOURCE}} &nbsp;|&nbsp; 작성일: {{WRITTEN}}</div>
