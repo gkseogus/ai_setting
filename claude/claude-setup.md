@@ -7,7 +7,7 @@
 ## 빠른 설치 (원클릭)
 
 ```bash
-git clone https://github.com/<your-org>/ai_setting.git ~/ai_setting
+git clone https://github.com/gkseogus/ai_setting.git ~/ai_setting
 cd ~/ai_setting
 chmod +x setup.sh
 ./setup.sh
@@ -189,6 +189,7 @@ claude plugin install product-management@knowledge-work-plugins
 ## 6. 커스텀 슬래시 커맨드
 
 `~/.claude/commands/` 디렉토리에 `.md` 파일을 넣으면 `/<파일명>`으로 호출 가능.
+setup.sh 6단계가 저장소 `commands/*.md` 전부를 `{{AI_SETTING_DIR}}` 자리표시자를 clone 경로로 치환해 복사한다. 커맨드를 고치면 저장소 `commands/` 를 수정한 뒤 다시 복사한다.
 
 ### /commit — 변경점 분석 후 커밋
 
@@ -225,15 +226,14 @@ claude plugin install product-management@knowledge-work-plugins
 
 `~/.claude/commands/ssh-rds-tunnel.md`:
 
-등록된 RDS 목록에서 선택하거나 인자로 지정해 터널을 엽니다. 인프라별로 방식이 자동 분기됩니다:
+등록된 RDS 목록에서 선택하거나 인자로 지정해 터널을 엽니다. 목록은 `~/.claude/ai_setting.local.md` 의 `## ssh-rds-tunnel` 표에 적고, 항목별 방식에 따라 자동 분기됩니다:
 
-- **ssh** — 베스천 EC2 경유 SSH 터널 (reb_platform: `.pem` 키 + 22포트)
-- **ssm** — App EC2 경유 SSM 포트포워딩 (mealiq: 키·22포트 불필요, IAM 권한 + Session Manager Plugin만 필요)
+- **ssh** — 베스천 EC2 경유 SSH 터널 (`.pem` 키 + 22포트)
+- **ssm** — App EC2 경유 SSM 포트포워딩 (키·22포트 불필요, IAM 권한 + Session Manager Plugin만 필요)
 
 ```bash
-/ssh-rds-tunnel                     # 목록에서 선택
-/ssh-rds-tunnel reb-platform-prod   # SSH 터널 (localhost:5432)
-/ssh-rds-tunnel mealiq-prod         # SSM 터널 (localhost:15433)
+/ssh-rds-tunnel               # 목록에서 선택
+/ssh-rds-tunnel my-app-prod   # 개인 설정 표의 이름으로 바로 연결 (예: SSM 터널 localhost:15432)
 ```
 
 ## 7. MCP 서버 등록
@@ -357,7 +357,7 @@ user_invocable: true
 ## 세팅 순서 요약
 
 ```
-1. git clone https://github.com/<your-org>/ai_setting.git ~/ai_setting
+1. git clone https://github.com/gkseogus/ai_setting.git ~/ai_setting
 2. cd ~/ai_setting && ./setup.sh
 3. Claude Code 재시작
 4. aws configure (필요 시)
