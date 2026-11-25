@@ -4,7 +4,7 @@
 $ARGUMENTS — base 브랜치 (기본값: main)
 
 ## PR 템플릿
-@/Users/hdh/Desktop/ai_setting/template/pull_request_template.md
+@{{AI_SETTING_DIR}}/template/pull_request_template.md
 
 ## 작업 순서
 
