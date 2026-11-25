@@ -1,7 +1,7 @@
 현재 다루고 있는 에러 / 버그 / 예외에 대해 **근본 원인을 추적하고, 표면 패치가 아닌 근본 수정인지 검증**하는 워크플로우.
 
 ## 글로벌 룰 (반드시 먼저 읽기)
-@/Users/hdh/Desktop/ai_setting/template/error_handling.md
+@{{AI_SETTING_DIR}}/template/error_handling.md
 
 ---
 
