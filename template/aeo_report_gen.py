@@ -14,7 +14,7 @@ aeo_report_gen.py — Vercel Observability(Bot Name) 데이터로 AEO 지표 리
 
 extracted.json 형식:
 {
-  "scope": "rebstudios / reb-platform-frontend",
+  "scope": "my-team / my-site",
   "title": "Edge Requests — AEO Bot Metrics",      # 선택
   "env": "Production",
   "period_label": "Last 30 days",
