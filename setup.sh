@@ -69,6 +69,10 @@ echo "  settings.local.json 적용 완료"
 
 # 5. 글로벌 CLAUDE.md 생성
 step 5 "글로벌 CLAUDE.md 생성"
+if [ -f ~/CLAUDE.md ]; then
+  warn "CLAUDE.md 이미 존재 — 기존 파일 백업 후 덮어쓰기"
+  cp ~/CLAUDE.md ~/CLAUDE.md.bak
+fi
 cat > ~/CLAUDE.md << CLAUDEMD
 # Global Claude Code Rules
 
@@ -92,50 +96,17 @@ echo "  ~/CLAUDE.md 생성 완료"
 
 # 6. 커스텀 슬래시 커맨드 복사
 step 6 "커스텀 슬래시 커맨드 등록"
-cp "$SCRIPT_DIR/commands/commit.md" ~/.claude/commands/commit.md
-echo "  /commit 커맨드 등록 완료"
+for f in "$SCRIPT_DIR"/commands/*.md; do
+  sed "s|{{AI_SETTING_DIR}}|$SCRIPT_DIR|g" "$f" > ~/.claude/commands/"$(basename "$f")"
+  echo "  /$(basename "$f" .md) 커맨드 등록 완료"
+done
 
-cp "$SCRIPT_DIR/commands/create_pr.md" ~/.claude/commands/create_pr.md
-echo "  /create_pr 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/frontend_convention.md" ~/.claude/commands/frontend_convention.md
-echo "  /frontend_convention 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/backend_convention.md" ~/.claude/commands/backend_convention.md
-echo "  /backend_convention 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/ssh-rds-tunnel.md" ~/.claude/commands/ssh-rds-tunnel.md
-echo "  /ssh-rds-tunnel 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/notion_diary.md" ~/.claude/commands/notion_diary.md
-echo "  /notion_diary 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/weekly_report.md" ~/.claude/commands/weekly_report.md
-echo "  /weekly_report 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/jira_project.md" ~/.claude/commands/jira_project.md
-echo "  /jira_project 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/root_cause.md" ~/.claude/commands/root_cause.md
-echo "  /root_cause 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/aeo_report.md" ~/.claude/commands/aeo_report.md
-echo "  /aeo_report 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/type_error_fix.md" ~/.claude/commands/type_error_fix.md
-echo "  /type_error_fix 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/design_loop.md" ~/.claude/commands/design_loop.md
-echo "  /design_loop 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/final_test.md" ~/.claude/commands/final_test.md
-echo "  /final_test 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/slack_share.md" ~/.claude/commands/slack_share.md
-echo "  /slack_share 커맨드 등록 완료"
-
-cp "$SCRIPT_DIR/commands/security_daily.md" ~/.claude/commands/security_daily.md
-echo "  /security_daily 커맨드 등록 완료"
+if [ -f ~/.claude/ai_setting.local.md ]; then
+  echo "  ~/.claude/ai_setting.local.md 이미 존재 — 그대로 둠"
+else
+  cp "$SCRIPT_DIR/template/ai_setting.local.example.md" ~/.claude/ai_setting.local.md
+  echo "  ~/.claude/ai_setting.local.md 생성 완료 (개인 설정 예시)"
+fi
 
 # 7. 플러그인 설치
 step 7 "플러그인 설치"
@@ -205,3 +176,4 @@ echo "  6. Atlassian MCP 인증: Claude Code에서 /mcp 실행 후 atlassian 항
 echo "  7. Figma: PAT 발급(Settings > Security > Personal access tokens) → export FIGMA_API_KEY=... → ./setup.sh 재실행"
 echo "  8. Figma 공식 MCP 인증: /mcp 실행 후 plugin:figma 항목 OAuth 인증 (쓰기 전용, 무료 월 6회)"
 echo "  9. 프론트 프로젝트 루트에서 /impeccable init 1회 실행"
+echo "  10. ~/.claude/ai_setting.local.md 에 개인 설정(Jira·RDS·브랜드 등) 채우기"
