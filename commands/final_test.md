@@ -6,7 +6,7 @@
 - 운영 URL 이 없으면 추측하지 말고 AskUserQuestion 으로 받는다.
 
 ## 글로벌 룰 (반드시 먼저 읽기)
-@/Users/hdh/Desktop/ai_setting/template/error_handling.md
+@{{AI_SETTING_DIR}}/template/error_handling.md
 
 ---
 
