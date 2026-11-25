@@ -5,12 +5,49 @@ AI 코딩 에이전트별 환경 세팅 및 공유 설정을 관리하는 저장
 ## 빠른 설치
 
 ```bash
-git clone https://github.com/<your-org>/ai_setting.git ~/ai_setting
+git clone https://github.com/gkseogus/ai_setting.git ~/ai_setting
 cd ~/ai_setting
 ./setup.sh
 ```
 
 새 디바이스에서 위 3줄만 실행하면 Claude Code 커스텀 세팅이 완료됩니다.
+
+## 설치 전 주의
+
+`setup.sh` 는 아래 파일을 **덮어씁니다**. 이미 있으면 같은 위치에 `.bak` 로 백업한 뒤 새로 씁니다.
+
+- `~/.claude/settings.json` → `~/.claude/settings.json.bak`
+- `~/.claude/settings.local.json` → `~/.claude/settings.local.json.bak`
+- `~/CLAUDE.md` → `~/CLAUDE.md.bak`
+
+기존 설정(권한, 플러그인, 글로벌 규칙)이 있으면 실행 전에 내용을 확인하고, 실행 후 `.bak` 에서 필요한 부분을 다시 옮깁니다. `.bak` 은 실행할 때마다 새로 덮어써집니다.
+
+## 개인 설정
+
+회사·개인 고정값(Jira 사이트, RDS 목록, 보고서 브랜드명 등)은 저장소가 아니라 `~/.claude/ai_setting.local.md` 에 둡니다. `setup.sh` 가 이 파일이 없을 때만 `template/ai_setting.local.example.md` 를 복사하고, 이미 있으면 건드리지 않습니다. 쓰는 커맨드의 절만 채우면 됩니다.
+
+| 절 | 읽는 커맨드 | 내용 |
+|----|-------------|------|
+| `## brand` | `/weekly_report` | 주간 보고서 PDF 상단 라벨·푸터의 회사명 |
+| `## weekly_report` | `/weekly_report` | 작성자 |
+| `## aeo_report` | `/aeo_report` | 기본 Vercel `팀/프로젝트` |
+| `## jira_project` | `/jira_project` | 사이트, 기본 프로젝트 키·담당자, 이슈 타입 이름, 필수 필드, 우선순위·transition id |
+| `## ssh-rds-tunnel` | `/ssh-rds-tunnel` | AWS 리전, RDS 터널 목록(이름·방식·게이트웨이·로컬 포트) |
+
+값을 비워 두면 커맨드가 실행 중에 묻거나 기본 동작으로 처리합니다. 예를 들어 Jira 담당자는 현재 사용자, AWS 리전은 `aws configure` 값을 쓰고, 브랜드명은 보고서에서 생략합니다. Jira 의 우선순위·transition id·필수 필드는 `기본 프로젝트 키` 프로젝트에만 쓰고, 다른 프로젝트는 조회해서 씁니다.
+
+## 커맨드 수정
+
+`~/.claude/commands/` 의 설치본은 `{{AI_SETTING_DIR}}` 자리표시자를 clone 경로로 치환한 **복사본**입니다. 커맨드를 고칠 때는 저장소의 `commands/*.md` 를 수정한 뒤 6단계 루프만 다시 실행해 복사합니다.
+
+```bash
+cd ~/ai_setting
+for f in commands/*.md; do
+  sed "s|{{AI_SETTING_DIR}}|$PWD|g" "$f" > ~/.claude/commands/"$(basename "$f")"
+done
+```
+
+`./setup.sh` 전체를 다시 실행해도 되지만, 그러면 `settings.json`·`settings.local.json`·`~/CLAUDE.md` 도 다시 덮어씁니다.
 
 ## 구조
 
@@ -22,8 +59,9 @@ ai_setting/
 │   ├── backend_conventions.md      # 백엔드 글로벌 컨벤션 (11항목, 상수 분리·문서 업데이트·테스트 코드 포함)
 │   ├── error_handling.md           # 에러 처리 룰 (표면 vs 근본 판단, 5단계)
 │   ├── pull_request_template.md    # PR 템플릿 원본
-│   ├── weekly_report_template.html # /weekly_report PDF 고정 디자인 (Re:B 톤)
-│   ├── aeo_report_template.html    # /aeo_report PDF 고정 디자인 (Re:B 톤)
+│   ├── ai_setting.local.example.md # 개인 설정 예시 (setup.sh 가 ~/.claude/ai_setting.local.md 로 복사)
+│   ├── weekly_report_template.html # /weekly_report PDF 고정 디자인 (브라운/크림 톤, 브랜드명은 개인 설정)
+│   ├── aeo_report_template.html    # /aeo_report PDF 고정 디자인 (브라운/크림 톤)
 │   └── aeo_report_gen.py           # /aeo_report 봇 분류·AEO 지표 계산·템플릿 채우기 생성기
 ├── commands/                       # 커스텀 슬래시 커맨드 (에이전트 공통)
 │   ├── commit.md                   # /commit 커맨드
@@ -45,6 +83,7 @@ ai_setting/
 │   ├── claude-setup.md             # 설치 및 설정 가이드 (상세)
 │   ├── product-management-ko.sh    # 기획 플러그인 스킬 설명 한글화
 │   └── settings.local.json         # 권한 설정 템플릿
+├── LICENSE                         # MIT
 └── README.md
 ```
 
@@ -56,8 +95,8 @@ ai_setting/
 | 2 | `~/.claude/commands/`, `~/.claude/hud/` 디렉토리 생성 |
 | 3 | `~/.claude/settings.json` 생성 (플러그인, HUD, 환경변수) |
 | 4 | `~/.claude/settings.local.json` 복사 (권한 설정) |
-| 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조) |
-| 6 | `/commit`, `/create_pr`, `/frontend_convention`, `/backend_convention`, `/ssh-rds-tunnel`, `/notion_diary`, `/weekly_report`, `/jira_project`, `/root_cause`, `/aeo_report`, `/type_error_fix`, `/design_loop`, `/final_test`, `/slack_share`, `/security_daily` 슬래시 커맨드 등록 |
+| 5 | `~/CLAUDE.md` 생성 (프론트엔드/백엔드/에러 처리 룰 참조, 기존 파일은 `~/CLAUDE.md.bak` 로 백업) |
+| 6 | `commands/*.md` 전부를 `{{AI_SETTING_DIR}}` → clone 경로로 치환해 `~/.claude/commands/` 에 등록 + `~/.claude/ai_setting.local.md` 가 없으면 예시 복사 |
 | 7 | OMC, Figma, Product Management(기획) 플러그인 설치 + 기획 플러그인 스킬 설명 한글화 |
 | 8 | MCP 서버 등록 (Playwright, GitHub CLI, GWS CLI, Notion, Atlassian) + Skill Creator 플러그인 |
 | 9 | 디자인 스택: taste-skill(`design-taste-frontend`), Impeccable 플러그인, Framelink(Figma) MCP (`FIGMA_API_KEY` 있을 때만) |
@@ -89,10 +128,10 @@ ai_setting/
 | `/create_pr` | 커밋 분석 후 PR 템플릿 기반 GitHub PR 자동 생성 |
 | `/frontend_convention` | 프론트엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (상수/타입/훅/API 규칙 + 문서·테스트 동반 갱신 검사) |
 | `/backend_convention` | 백엔드 컨벤션 기준으로 코드 검토 및 자동 수정 (레이어 분리, 상수 분리, 리턴 타입, 네이밍, 린트 + 문서·테스트 동반 갱신 검사) |
-| `/ssh-rds-tunnel` | RDS 터널 연결 — 베스천 SSH(reb) 또는 SSM 포트포워딩(mealiq) 방식 자동 분기 (등록된 RDS 선택 또는 직접 입력) |
+| `/ssh-rds-tunnel` | RDS 터널 연결 — SSM 포트포워딩 또는 베스천 SSH 방식 자동 분기 (등록 목록은 개인 설정 파일, 목록에서 선택 또는 직접 입력) |
 | `/notion_diary` | 현재 세션에서 한 작업을 노션 일지(`일지 > YYYY-MM > YYYY-MM-DD`)에 음슴체로 비개발자도 볼 수 있게 자동 정리 |
 | `/weekly_report` | 이번 주(월~금) 노션 일지를 모아 대표 보고용 주간 업무 보고서(진행/완료·결론/지연·확인 필요/다음 주 예정/대표 결정 사항)를 평어·개조식으로 재구성해 PDF(기본 `~/Desktop`, 인자로 경로 지정)로 저장 |
-| `/jira_project` | 새 기능/이니셔티브 단위로 Jira 에 Epic 1개 + 하위 Story/Task 트리를 한 번에 등록 (기본 프로젝트 `KAN`) |
+| `/jira_project` | 새 기능/이니셔티브 단위로 Jira 에 Epic 1개 + 하위 Story/Task 트리를 한 번에 등록 (사이트·기본 프로젝트·필수 필드는 개인 설정) |
 | `/root_cause` | 에러/버그 발생 시 "뿌리 뽑기 vs 싹 자르기" Triage → 근본 원인 추적(5 Whys + 유사 패턴) → 수정 → 검증(증상 재현 불가/유사/회귀/테스트) → 5항목 보고 |
 | `/aeo_report` | Vercel Observability Edge Requests(Bot Name) → AEO 지표 리포트 PDF. AI 답변엔진(OpenAI/Anthropic/Google/Perplexity 등) 크롤러 유입·점유율·캐시율을 벤더별 집계 + 전체 봇 분류(AI/Search/SEO/Social/Other). 기본 `~/Desktop`, 인자로 프로젝트/기간/경로 지정 |
 | `/type_error_fix` | Pylance/pyright 타입 진단을 `# type: ignore` 없이 근본 수정 — Triage(런타임 버그 vs 타입 계약 누락) → Unknown 발원지 추적 → 패턴 카탈로그(Protocol 바운드, Optional 좁히기, overload 등) 적용 → pyright CLI 0 errors + pytest 런타임 불변 검증 → 5항목 보고 |
@@ -161,7 +200,7 @@ claude plugin install product-management@knowledge-work-plugins
 
 ### /slack_share 사용 예시
 ```
-/slack_share 배포 #98_펫시어지 오늘 커밋
+/slack_share 배포 #dev-shop 오늘 커밋
 /slack_share 공지 상품게시 기능 출시
 /slack_share 보안 오늘 점검 보고서
 ```
@@ -171,3 +210,7 @@ claude plugin install product-management@knowledge-work-plugins
 /security_daily
 /security_daily ~/projects 최근 3일
 ```
+
+## License
+
+[MIT](LICENSE)
