@@ -1,7 +1,7 @@
 프론트엔드 컨벤션을 적용하여 현재 프로젝트의 코드를 검토하고 위반 사항을 수정합니다.
 
 ## 컨벤션 파일
-@/Users/hdh/Desktop/ai_setting/template/frontend_conventions.md
+@{{AI_SETTING_DIR}}/template/frontend_conventions.md
 
 ## 작업 순서
 1. 위 컨벤션 파일을 읽고 내용을 숙지합니다.
