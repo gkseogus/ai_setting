@@ -2,11 +2,11 @@ Vercel Observability 의 Edge Requests(Bot Name) 데이터를 뽑아 AEO(AI 답�
 
 ## 인자
 $ARGUMENTS — 모두 선택. 자유 텍스트로 받는다.
-- **프로젝트 범위**: `팀/프로젝트` 형태. 예) `rebstudios/reb-platform-frontend`. 비어 있으면 기본값 `rebstudios/reb-platform-frontend`.
+- **프로젝트 범위**: `팀/프로젝트` 형태. 예) `my-team/my-site`. 비어 있으면 개인 기본값을 `~/.claude/ai_setting.local.md` 의 `## aeo_report` 절 `기본 프로젝트` 에서 읽는다. 파일이나 값이 없으면 사용자에게 묻는다.
 - **기간(period)**: `24h` / `7d` / `30d` / `90d` 중 하나(Vercel `period=` 파라미터). 비어 있으면 `30d`.
 - **환경(env)**: `Production` / `Preview` / `All`. 비어 있으면 `Production`.
 - **출력 경로/파일명**: 예) `~/Desktop/reports`, `~/Desktop/aeo.pdf`. 비어 있으면 `~/Desktop/AEO_<프로젝트>_<기간>_<YYYY-MM-DD>.pdf`.
-- 예시: `rebstudios/reb-platform-frontend 30d ~/Desktop/reports`
+- 예시: `my-team/my-site 30d ~/Desktop/reports`
 
 ## 어디에 쓰는가
 사이트에 **어떤 AI 답변엔진 크롤러(AEO 봇)** 가 얼마나 들어오는지 한 장으로 본다.
@@ -83,15 +83,15 @@ GPTBot·OAI-SearchBot·ClaudeBot·PerplexityBot·Google(Read-Aloud/Extended)·Me
 8. 기간 표시(날짜 범위, KST)는 상단 날짜 버튼 텍스트에서 읽어 `period_range` 로 쓴다(없으면 비워 둔다).
 
 ## 리포트 디자인 (고정 템플릿 + 생성기)
-- 디자인은 **고정 템플릿**을 쓴다: `~/Desktop/ai_setting/template/aeo_report_template.html` (Re:B 브라운/크림 톤, 헤더+타일 4개+차트 카드+AI 벤더 표+전체 봇 표+푸터). `<style>` 은 절대 바꾸지 않는다.
-- 채우기/분류/지표 계산은 생성기 스크립트가 한다: `~/Desktop/ai_setting/template/aeo_report_gen.py`.
+- 디자인은 **고정 템플릿**을 쓴다: `{{AI_SETTING_DIR}}/template/aeo_report_template.html` (브라운/크림 톤, 헤더+타일 4개+차트 카드+AI 벤더 표+전체 봇 표+푸터). `<style>` 은 절대 바꾸지 않는다.
+- 채우기/분류/지표 계산은 생성기 스크립트가 한다: `{{AI_SETTING_DIR}}/template/aeo_report_gen.py`.
 - 템플릿·생성기가 없으면 실패를 알리고 임의로 대체 디자인을 만들지 않는다(먼저 파일 경로를 사용자에게 확인).
 
 ## 생성 순서 (PDF)
 1. 수집한 데이터를 JSON 으로 쓴다(임시 경로, 예: 스크래치패드/`.aeo_data.json`):
    ```json
    {
-     "scope": "rebstudios / reb-platform-frontend",
+     "scope": "my-team / my-site",
      "title": "Edge Requests — AEO Bot Metrics",
      "env": "Production",
      "period_label": "Last 30 days",
@@ -105,9 +105,9 @@ GPTBot·OAI-SearchBot·ClaudeBot·PerplexityBot·Google(Read-Aloud/Extended)·Me
    `period_label` 은 기간 인자에 맞춰(`24h`→`Last 24 hours`, `7d`→`Last 7 days`, `30d`→`Last 30 days`, `90d`→`Last 90 days`).
 2. 생성기를 돌려 HTML 을 만든다(차트 있으면 `--chart` 추가):
    ```
-   python3 ~/Desktop/ai_setting/template/aeo_report_gen.py \
+   python3 {{AI_SETTING_DIR}}/template/aeo_report_gen.py \
      --data <.aeo_data.json> \
-     --template ~/Desktop/ai_setting/template/aeo_report_template.html \
+     --template {{AI_SETTING_DIR}}/template/aeo_report_template.html \
      --out <출력 pdf 폴더>/.aeo_report.html \
      --chart ~/.playwright-mcp/aeo_chart.png
    ```
