@@ -3,7 +3,7 @@ Figma 디자인(또는 텍스트 설명)을 **taste-skill 규칙으로 구현 �
 인자: `$ARGUMENTS` = `<figma-url | 화면 설명> [로컬 URL, 기본 http://localhost:3000]`
 
 ## 글로벌 룰 (반드시 먼저 읽기)
-@/Users/hdh/Desktop/ai_setting/template/frontend_conventions.md
+@{{AI_SETTING_DIR}}/template/frontend_conventions.md
 
 **규칙 우선순위**: 프로젝트 컨벤션(위 파일) > `design-taste-frontend` 스킬 > Impeccable 지적 사항.
 충돌하면(Tailwind 클래스 순서, `cn()`, 1파일 1컴포넌트, `contents/` 상수 분리 등) 항상 컨벤션을 따른다.
